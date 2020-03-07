@@ -27,7 +27,7 @@ public class ShiroRealmTwo extends AuthorizingRealm {
         UsernamePasswordToken upToken = (UsernamePasswordToken) token;
         //2. 从 UsernamePasswordToken 中来获取 username
         String username  = upToken.getUsername();
-        System.out.println("doGetAuthenticatifo"+username);
+        System.out.println("doGetAuthenticatifo"+username+"zhixing");
         User user=userMapper.findUserName(username);
         if(user==null){
             throw new UnknownAccountException("用户不存在或者密码不正确!");

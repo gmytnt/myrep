@@ -24,6 +24,15 @@ public class User implements Serializable{
     private Integer missNumber;
     private Date missTime;
     private List<Article> articles;
+    private Roles roles;
+
+    public Roles getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Roles roles) {
+        this.roles = roles;
+    }
 
     public List<Article> getArticles() {
         return articles;
