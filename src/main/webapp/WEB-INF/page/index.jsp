@@ -56,6 +56,7 @@
                     <ul class="bbs_post_list">
 
                     </ul>
+                    <div id="demo1"></div>
                 </div>
             </div>
         </div>
@@ -102,10 +103,11 @@
 <script src="/static/plugin/layui/layui.js"></script>
 <script>
     //一般直接写在一个js文件中
-    layui.use(['layer', 'form','jquery','carousel'], function(){
+    layui.use(['layer', 'form','jquery','carousel','laypage'], function(){
         var layer = layui.layer
             ,form = layui.form
             ,$=layui.jquery
+            ,laypage = layui.laypage
             ,carousel=layui.carousel;
 //            $(".header").load("/header");
         /*文字动画*/
@@ -149,6 +151,14 @@
             ,anim: 'fade'
             ,height: '260px'
             ,width: "100%"
+        });
+        //总页数大于页码总数
+        laypage.render({
+            elem: 'demo1'
+            ,count: 70 //数据总数
+            ,jump: function(obj){
+                console.log(obj)
+            }
         });
         $.ajax({
             type: "GET",
