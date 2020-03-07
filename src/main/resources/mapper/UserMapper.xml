@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mytnt.dao.UserMapper">
+    <resultMap id="userAndArticle" type="User">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="telephone" column="telephone"/>
+        <result property="salt" column="salt"/>
+        <result property="createIp" column="create_ip"/>
+        <result property="createTime" column="create_time"/>
+        <result property="status" column="status"/>
+        <result property="email" column="email"/>
+        <result property="sex" column="sex"/>
+        <result property="qq" column="qq"/>
+        <result property="signature" column="signature"/>
+        <result property="avatar" column="avatar"/>
+        <result property="missNumber" column="miss_number"/>
+        <result property="missTime" column="miss_time"/>
+        <collection property="articles" ofType="Article">
+            <id column="a_id" property="aid"/>
+            <result column="user_id" property="userId"/>
+            <result column="a_title" property="atitle"/>
+            <result column="a_content" property="acontent"/>
+            <result column="a_time" property="atime"/>
+            <result column="a_info" property="ainfo"/>
+            <result column="a_status" property="astatus"/>
+            <result column="a_views" property="aviews"/>
+            <result column="a_comment_count" property="acommentCount"/>
+            <result column="a_like_count" property="alikeCount"/>
+        </collection>
+    </resultMap>
+    <!--查询用户名是否存在-->
+    <select id="findUserName"
+            resultType="User">
+        select * from t_user WHERE username=#{username}
+    </select>
+    <!--查询手机是否存在-->
+    <select id="findtelePhone"
+            resultType="User">
+        select * from t_user WHERE telephone=#{telephone}
+    </select>
+    <!--查询用户是否存在-->
+    <select id="findUserId"
+            resultType="User">
+        select * from t_user WHERE id=#{userId}
+    </select>
+    <!--添加用户-->
+    <insert id="addUser" parameterType="User">
+        INSERT into t_user (username,password,telephone,salt,create_ip,create_time)
+         VALUES (#{username},#{password},#{telephone},#{salt},#{createIp},now())
+    </insert>
+    <!--验证手机是否多次获取验证码-->
+    <select id="findtelePhoneCount"
+            resultType="RegisterLog">
+        SELECT * FROM t_register_log WHERE telephone=#{telephone}
+    </select>
+    <!--验证Ip是否多次使用不同手机获取验证码-->
+    <select id="findRegisterLogIp" resultType="int">
+        select count(*) from t_register_log WHERE ip_address=#{ip} AND register_time BETWEEN  DATE_SUB(NOW(), INTERVAL 2 HOUR) AND NOW()
+    </select>
+    <!--验证手机是否多次获取验证码-->
+    <insert id="addRegisterLog" parameterType="RegisterLog">
+        INSERT INTO t_register_log (ip_address,telephone,frequency,register_time) VALUES (#{ipAddress},#{telephone},#{frequency},now())
+    </insert>
+    <!--验证手机是否多次获取验证码-->
+    <update id="updateRegisterLog" parameterType="RegisterLog">
+        update t_register_log set frequency=#{frequency},ip_address=#{ipAddress},register_time=now() where id=#{id}
+    </update>
+    <!--查询用户的所有文章-->
+    <select id="findUserArticle" resultMap="userAndArticle">
+        SELECT u.`id`,u.`username`,u.`signature`,u.`avatar`,a.* FROM t_user u LEFT OUTER JOIN t_article a ON u.`id`=a.`user_id` WHERE a.`a_status`=2  AND u.`id` =#{id}
+    </select>
+    <!--统计文章数量-->
+    <select id="findUserArticleCount" resultType="int">
+        SELECT COUNT(*) FROM t_article WHERE user_id =#{id}
+    </select>
+    <!--查询用户的所有访问-->
+    <select id="findUserArticleViews" resultType="int">
+        SELECT IF(SUM(a_views) IS NULL,0,SUM(a_views)) FROM t_article WHERE user_id =#{id}
+    </select>
+    <!--查询用户的所有评论-->
+    <select id="findUserArticleComments" resultType="int">
+        SELECT IF(SUM(a_comment_count) IS NULL,0,SUM(a_comment_count)) FROM t_article WHERE user_id =#{id}
+    </select>
+    <!--查询用户的所有点赞-->
+    <select id="findUserArticleLikes" resultType="int">
+        SELECT IF(SUM(a_like_count) IS NULL,0,SUM(a_like_count)) FROM t_article WHERE user_id =#{id}
+    </select>
+    <!--查询用户的粉丝数量-->
+    <select id="findUserAttentionCount" resultType="int">
+        SELECT COUNT(*) FROM t_attention WHERE attention_uid =#{othersId}
+    </select>
+    <!--查询用户的关注的数量-->
+    <select id="findAttentionCount" resultType="int">
+        SELECT COUNT(*) FROM t_attention WHERE followers_uid =#{userId}
+    </select>
+    <!--查询用户之间的关系-->
+    <select id="findAttention" resultType="String">
+        SELECT attention_status FROM t_attention WHERE `attention_uid` = #{othersId} AND followers_uid =#{selfId}
+    </select>
+    <!--添加用户之间的关系-->
+    <insert id="addAttention">
+        INSERT INTO t_attention (`attention_uid`,followers_uid,attention_time) VALUES (#{othersId},#{selfId},now())
+    </insert>
+    <!--更新用户之间为关注-->
+    <update id="updateAddAttention">
+        UPDATE t_attention set attention_time=now(),attention_status=#{attentionStatus} WHERE `attention_uid` = #{othersId} AND followers_uid =#{selfId}
+    </update>
+    <!--更新用户之间为取消-->
+    <update id="cancleAttention">
+        UPDATE t_attention set attention_off=now(),attention_status=#{attentionStatus} WHERE `attention_uid` = #{othersId} AND followers_uid =#{selfId}
+    </update>
+    <!--查询用户的关注的所有人信息-->
+    <select id="findAttentionUserInfo" resultType="User">
+        SELECT u.`id`,u.`username`,u.`avatar`,u.`signature` FROM t_attention a LEFT OUTER JOIN t_user u ON a.`attention_uid`=u.`id`
+        WHERE attention_status=1 AND a.followers_uid=#{userId}
+    </select>
+    <!--查询用户的粉丝的所有人信息-->
+    <select id="findFollowersUserInfo" resultType="User">
+        SELECT u.`id`,u.`username`,u.`avatar`,u.`signature` FROM t_attention a LEFT OUTER JOIN t_user u ON a.`followers_uid`=u.`id`
+        WHERE attention_status=1 AND a.`attention_uid`=#{userId}
+    </select>
+
+</mapper>
+
+
+

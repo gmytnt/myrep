@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no"/>
+    <title>篮球那些事</title>
+    <link rel="stylesheet" href="/static/plugin/layui/css/layui.css"/>
+    <link rel="stylesheet" href="/static/plugin/font-awesome/css/font-awesome.css"/>
+    <link rel="stylesheet" href="/static/css/common.css"/>
+    <link rel="stylesheet" href="/static/css/compiler.css"/>
+
+</head>
+<body>
+    <div class="header">
+        <div class="header_body">
+
+            <div class="logo">
+                <img src="/static/images/logo.jpg">
+                <div class="logo_name">篮球那些事</div>
+            </div>
+            <button class="menu_toggler hide_lg hide_md"><i class="fa fa-bars" aria-hidden="true"></i></button>
+            <div class="hide_xs hide_sm menu">
+                <ul>
+                    <li class="menu_item action"><a href="#">首页</a></li>
+                    <li class="menu_item"><a href="#">NBA</a></li>
+                    <li class="menu_item"><a href="#">CBA</a></li>
+                    <li class="menu_item"><a href="#">学院派</a></li>
+                    <li class="menu_item"><a href="#">街头派</a></li>
+                    <li class="menu_item"><a href="#">视频</a></li>
+                    <li class="menu_item"><a href="#">致胜宝</a></li>
+                    <li class="menu_item"><a href="#">商城</a></li>
+                    <li class="menu_item"><a href="#">联系</a></li>
+                </ul>
+                <div class="">
+                    <a href="/register" class="layui-btn btn_reg">注册</a>
+                    <a href="/login" class="layui-btn layui-btn-normal btn_login">登录</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="main">
+        <!--<div class="layui-row">-->
+            <div class="edit">
+                <!--<div class="layui-upload">-->
+                    <!--<button type="button" class="layui-btn" id="test1">上传图片</button>-->
+                    <!--<div class="layui-upload-list">-->
+                        <!--<img class="layui-upload-img" id="demo1">-->
+                        <!--<p id="demoText"></p>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <h3>发布文章</h3>
+                <div class="edit_body">
+                    <form class="layui-form" action="">
+                        <input type="text" name="title" lay-verify="title" id="article_title" autocomplete="off" placeholder="请输入文章题目" class="layui-input article_title">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label article_assort">所属板块:</label>
+                            <div class="layui-input-block">
+                                <input type="checkbox" name="style[]" title="NBA">
+                                <input type="checkbox" name="style[]" title="CBA">
+                                <input type="checkbox" name="style[]" title="学院派">
+                                <input type="checkbox" name="style[]" title="街球派">
+                                <input type="checkbox" name="style[]" title="致胜宝">
+                            </div>
+                        </div>
+                    </form>
+
+                    <div id="editor">
+
+                    </div>
+
+                </div>
+                <!--<button id="btn1">获取html</button>-->
+                <div class="clearfix">
+                    <button type="button" class="layui-btn" id="art_sbm">提交</button>
+                </div>
+            </div>
+        <!--</div>-->
+    </div>
+    <div class="footer">
+        <div class="footer_body">
+            &copy;2020&nbsp;篮球那些事&nbsp;--&nbsp;个人网站
+        </div>
+    </div>
+
+    <script src="/static/plugin/layui/layui.js"></script>
+    <script type="text/javascript" src="/static/plugin/editor/wangEditor.js"></script>
+    <script src="https://cdn.bootcss.com/js-xss/0.3.3/xss.js"></script>
+    <script type="text/javascript">
+        var E = window.wangEditor
+        var editor = new E('#editor')
+        // 通过 url 参数配置 debug 模式。url 中带有 wangeditor_debug_mode=1 才会开启 debug 模式
+        editor.customConfig.debug = location.href.indexOf('wangeditor_debug_mode=1') > 0
+         editor.customConfig.uploadImgServer = '/method2';  // 上传图片到服务器
+//         editor.customConfig.uploadImgShowBase64 = true   // 使用 base64 保存图片
+        // 隐藏“网络图片”tab
+        editor.customConfig.showLinkImg = false;
+        editor.customConfig.height = 1000
+        editor.customConfig.uploadFileName = 'file';
+        // 忽略粘贴内容中的图片
+        editor.customConfig.pasteIgnoreImg = true;
+        editor.customConfig.menus = [
+            'head',  // 标题
+            'bold',  // 粗体
+            'fontSize',  // 字号
+            'fontName',  // 字体
+            'italic',  // 斜体
+            'underline',  // 下划线
+            'strikeThrough',  // 删除线
+            'foreColor',  // 文字颜色
+            'backColor',  // 背景颜色
+            'link',  // 插入链接
+            'list',  // 列表
+            'justify',  // 对齐方式
+            'quote',  // 引用
+            'emoticon',  // 表情
+            'image',  // 插入图片
+            'table',  // 表格
+            'code',  // 插入代码
+            'undo',  // 撤销
+            'redo'  // 重复
+        ]
+        editor.create()
+
+        document.getElementById('art_sbm').addEventListener('click', function () {
+            // 读取 html
+            alert(editor.txt.html())
+        }, false);
+
+    </script>
+
+    <script>
+        //一般直接写在一个js文件中
+        layui.use(['layer', 'form','jquery','carousel','upload'], function(){
+            var layer = layui.layer
+                ,form = layui.form
+                ,$=layui.jquery
+                ,carousel=layui.carousel
+                ,upload=layui.upload;
+            //自定义验证规则
+            form.verify({
+                title: function(value){
+                    if(value.length < 5){
+                        return '标题至少得5个字符啊';
+                    }
+                }
+                ,pass: [
+                    /^[\S]{6,12}$/
+                    ,'密码必须6到12位，且不能出现空格'
+                ]
+                ,content: function(value){
+                    layedit.sync(editIndex);
+                }
+            });
+
+            /*文件上传*/
+            var uploadInst = upload.render({
+                elem: '#test1'
+                ,url: '/method2' //改成您自己的上传接口
+                ,before: function(obj){
+                    console.log(obj);
+                    //预读本地文件示例，不支持ie8
+                    obj.preview(function(index, file, result){
+                        $('#demo1').attr('src', result); //图片链接（base64）
+                    });
+                }
+                ,done: function(res){
+
+                    //如果上传失败
+                    if(res.code > 0){
+                        return layer.msg('上传失败');
+                    }
+                    //上传成功
+                }
+                ,error: function(){
+                    //演示失败状态，并实现重传
+                    var demoText = $('#demoText');
+                    demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                    demoText.find('.demo-reload').on('click', function(){
+                        uploadInst.upload();
+                    });
+                }
+            });
+
+            /*文字动画*/
+            [...$('.logo_name').text()].reduce((pre, cur, index) => {
+                pre == index && ($('.logo_name').html(""));
+                let span = document.createElement("span");
+                span.textContent = cur;
+                $('.logo_name').append(span);
+            }, 0);
+            /*点击导航栏样式改变*/
+            $('.menu .menu_item').each(function () {
+                $(this).click(function () {
+                    $('.menu_item').removeClass('action');
+                    $(this).addClass('action');
+                });
+            });
+            /*小屏幕时候显示按钮*/
+            $('.menu_toggler').click(function () {
+                $('.menu').toggleClass("show");
+                $('.menu').toggleClass('hide_sm');
+                $('.menu').toggleClass('hide_xs');
+            });
+            /*获取屏幕变化值*/
+            $(window).on("resize",function () {
+                //获取窗口宽度
+                var clientW=$(window).width()+17;
+                console.log(clientW);
+                if(clientW>992){
+                    $('.menu').removeClass("show");
+                    $('.menu').addClass('hide_sm');
+                    $('.menu').addClass('hide_xs');
+                };
+
+            });
+            $(window).trigger("resize");
+            /*轮播图*/
+            //改变下时间间隔、动画类型、高度
+            carousel.render({
+                elem: '#ad_carousel_body'
+                ,interval: 1800
+                ,anim: 'fade'
+                ,height: '260px'
+                ,width: "100%"
+            });
+        });
+//        console.log(window.screen.width);
+    </script>
+
+</body>
+</html>

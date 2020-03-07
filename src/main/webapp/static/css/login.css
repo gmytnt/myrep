@@ -1,0 +1,72 @@
+.container{
+    margin:0 auto;
+    margin-top: 5%;
+    background: rgba(233, 180, 125, 0.7);
+    box-shadow: 0px 0px 20px #9f799a;
+    border-radius: 2%;
+    padding: 2%;
+}
+.container .login_box{
+    padding: 20px;
+    text-align: center;
+}
+.container .login_box .item{
+    margin-top: 20px;
+}
+.container .login_box .item h1{
+    font-size: 24px;
+    color: #df4f5f;
+    text-align: center;
+    display: inline-block;
+    border-right: 2px solid #70dfd4;
+    padding-right: 6px;
+    margin-left: -34%;
+}
+.container .login_box .item span{
+    font-size: 24px;
+    color: #c741df;
+    text-align: center;
+    display: inline-block;
+}
+.container .login_box .item i{
+    font-size: 24px;
+    margin-right: -30px;
+    color: #fff;
+}
+.container .login_box .item img{
+    padding-bottom: 10px;
+}
+.container .login_box .item input{
+    width: 200px;
+    border: none;
+    border-bottom: 2px solid #fff;
+    padding: 5px 2px 5px 30px;
+    background: none;
+    font-size: 24px;
+    outline: none;
+    color: #fff;
+}
+.container .login_box .login_btn{
+    width: 200px;
+    height: 40px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    margin-top: 4%;
+    font-size: 20px;
+    color: #fff;
+    border-radius: 46%;
+    box-shadow: 0px 0px 10px #df6342;
+    background-image: linear-gradient(to right, #eea2a2 0%, #bbc1bf 19%, #57c6e1 42%, #b49fda 79%, #7ac5d8 100%);
+}
+.container .login_box .login_btn:active{
+    box-shadow: 1px 1px 10px #6a90bc;
+}
+.container .login_box .item .inp,.container .login_box .item .phone_code{
+    width: 119px;
+    margin-left: -12px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+

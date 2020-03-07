@@ -1,0 +1,179 @@
+
+/*主体样式*/
+.main{
+    /*min-height: 600px;*/
+    margin: 30px auto 0px;
+}
+
+/*wangEdior富文本样式*/
+.w-e-text-container{
+    height: 300px !important;/*!important是重点，因为原div是行内样式设置的高度300px*/
+}
+.w-e-toolbar{
+    flex-wrap: wrap;
+}
+/*wangEdior富文本样式*/
+.edit{
+    background: #efc5c594;
+    border-radius: 6px;
+    margin: 2% 4%;
+    padding: 1%;
+    box-shadow: 0 0 10px #fff;
+    overflow:hidden;
+}
+.edit h3{
+    height: 40px;
+    line-height: 40px;
+    padding-left: 1%;
+    border-bottom: 1px solid #b71919;
+    color: #cc0000c7;
+    font-size: 30px;
+    font-family: serif;
+}
+.edit .edit_body{
+    padding: 1%;
+    box-shadow: 0 0 50px #ffffff70;
+}
+#editor{
+    background: #ffffffd6;
+}
+.edit .article_title{
+    margin: 1% 0;
+}
+.edit .article_assort{
+    padding: 1% 0;
+    text-align: left;
+    color: #fff;
+    font-size: 18px;
+}
+.edit .layui-input-block{
+    margin: 0;
+}
+.copy,.comment{
+    margin: 2% 4%;
+    background: #ffffffd6;
+    padding: 1%;
+    border-radius: 8px;
+}
+.personal_info{
+    display: flex;
+    padding: 2% 0;
+    border-bottom: 1px solid #ccc;
+}
+.personal_mark{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.personal_mark .sign_name{
+    width: 200px;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-left: 10%;
+    box-sizing: border-box;
+    text-align: center;
+}
+.personal_info .personal_data{
+    flex: auto;
+    margin: 0 2%;
+    display: flex;
+    justify-content: flex-start;
+}
+.personal_info .personal_data ul{
+    flex: auto;
+    align-self: flex-end;
+    display: flex;
+    justify-content: flex-start;
+    margin-left: 4%;
+}
+.personal_info .personal_data ul li{
+    margin-right: 4%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 4px;;
+    box-shadow: 0 0 10px #34ad8b;
+    justify-content: center;
+    box-sizing: border-box;
+    border-radius: 5px;
+}
+.personal_info .personal_data ul li span{
+    /*padding: 5px 0;*/
+    display: inline-block;
+}
+.personal_info img{
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    box-shadow: 0 0 14px #a92745;
+}
+.copy_header{
+    border-bottom: 2px solid #fa090952;
+}
+.copy_related{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 1% 2%;
+}
+.copy_title{
+    line-height: 34px;
+    padding: 10px;
+    color: #260101;
+    font-size: 24px;
+
+}
+.copy_body{
+    padding: 2% 2%;
+    line-height: 24px;
+    min-height: 600px;
+    border-bottom: 2px solid #fa090952;
+    margin-bottom: 2%;
+}
+#art_sbm{
+    float: right;
+    margin: 1% 3%;
+}
+.comment_header,.comment_footer{
+    display: flex;
+    align-items: flex-end;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+.comment_header img{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+.comment_body{
+    padding: 2% 1%;
+    line-height: 24px;
+    min-height: 100px;
+}
+.comment_footer{
+    padding: 20px;
+}
+.comment_footer>span,.comment_laud{
+    padding: 2px;
+    margin-right: 20px;
+}
+
+/*主体样式*/
+/*尾部样式*/
+.footer{
+    height: 60px;
+    margin: 25px auto 5px;
+    background: #ffffff38;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.footer .footer_body{
+    color: #74674bfa;
+}
+
+/*尾部样式*/

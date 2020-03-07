@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx.xsd">
+	
+	<!-- 读取jdbc.properties -->
+	<context:property-placeholder location="classpath:jdbc.properties"/>
+	<!-- mybatis配置驼峰形式的设置类 -->
+	<bean id="settings" class="org.apache.ibatis.session.Configuration">
+		<property name="mapUnderscoreToCamelCase" value="true"></property>
+	</bean>
+
+	<!-- 创建DataSource -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+		<property name="url" value="${jdbc.url}"/>
+		<property name="driverClassName" value="${jdbc.driverClass}"/>
+		<property name="username" value="${jdbc.user}"/>
+		<property name="password" value="${jdbc.password}"/>
+		<!-- 其他配置,比如数据库最大连接数 -->
+		<property name="maxActive" value="100"></property>
+		<!-- 最大空闲连接 -->
+		<property name="maxIdle" value="20"></property>
+	</bean>
+	
+	<!-- 创建SqlSessionFactory对象 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 关联连接池 -->
+		<property name="dataSource" ref="dataSource"/>
+		<!-- 加载sql映射文件 -->
+		<property name="mapperLocations" value="classpath*:mapper/*.xml"/>
+		<!-- 配置蛇形转驼峰 -->
+		<property name="configuration" ref="settings"></property>
+		<!-- 设置实体类别名 -->
+		<property name="typeAliasesPackage" value="com.mytnt.pojo"></property>
+		<!-- 引入插件 -->
+		<property name="plugins">
+			<array>
+				<!-- mybatis分页插件 -->
+				<bean class="com.github.pagehelper.PageInterceptor">
+					<property name="properties">
+						<!--
+						helperDialect:连接数据库的类型
+						 -->
+						<value>
+							helperDialect=mysql
+						</value>
+					</property>
+				</bean>
+			</array>
+		</property>
+	</bean>
+
+	<!-- Mapper接口的扫描 -->
+	<!-- 
+		注意：如果使用Mapper接口包扫描，那么每个Mapper接口在Spring容器中的id名称为类名： 例如 CustomerMapper -> customerMapper
+	 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- 配置Mapper接口所在包路径  -->
+		<property name="basePackage" value="com.mytnt.dao"/>
+		<property name="SqlSessionFactoryBeanName"
+				  value="sqlSessionFactory"/>
+	</bean>
+	
+	<!-- 开启Spring的IOC注解扫描 -->
+	<context:component-scan base-package="com.mytnt">
+		<context:exclude-filter type="annotation"
+								expression="org.springframework.stereotype.Controller"></context:exclude-filter>
+	</context:component-scan>
+	<!--
+    1. 配置 SecurityManager!
+    -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="cacheManager" ref="cacheManager"/>
+		<property name="realm" ref="jdbcRealm" />
+		<property name="authenticator" ref="authenticator"></property>
+
+		<property name="realms">
+			<list>
+				<ref bean="jdbcRealm"/>
+				<ref bean="shiroRealmTwo"/>
+			</list>
+		</property>
+	</bean>
+	<!--
+    2. 配置 CacheManager.
+    2.1 需要加入 ehcache 的 jar 包及配置文件.
+    -->
+	<bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+		<!-- Set a net.sf.ehcache.CacheManager instance here if you already have one.  If not, a new one
+             will be creaed with a default config:
+             <property name="cacheManager" ref="ehCacheManager"/> -->
+		<!-- If you don't have a pre-built net.sf.ehcache.CacheManager instance to inject, but you want
+             a specific Ehcache configuration to be used, specify that here.  If you don't, a default
+             will be used.: -->
+		<property name="cacheManagerConfigFile" value="classpath:ehcache.xml"/>
+	</bean>
+
+	<bean id="authenticator"
+		  class="org.apache.shiro.authc.pam.ModularRealmAuthenticator">
+		<property name="authenticationStrategy">
+			<bean class="org.apache.shiro.authc.pam.FirstSuccessfulStrategy"></bean>
+		</property>
+	</bean>
+	<!--
+    	3. 配置 Realm
+    	3.1 直接配置实现了 org.apache.shiro.realm.Realm 接口的 bean
+    -->
+	<bean id="jdbcRealm" class="com.mytnt.realms.ShiroRealm">
+		<property name="credentialsMatcher">
+			<bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+				<property name="hashAlgorithmName" value="MD5"></property>
+				<property name="hashIterations" value="1024"></property>
+			</bean>
+		</property>
+	</bean>
+	<bean id="shiroRealmTwo" class="com.mytnt.realms.ShiroRealmTwo">
+		<property name="credentialsMatcher">
+			<bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+				<property name="hashAlgorithmName" value="MD5"></property>
+				<property name="hashIterations" value="1024"></property>
+			</bean>
+		</property>
+	</bean>
+
+	<!--
+    4. 配置 LifecycleBeanPostProcessor. 可以自定的来调用配置在 Spring IOC 容器中 shiro bean 的生命周期方法.
+    -->
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+
+	<!-- Enable Shiro Annotations for Spring-configured beans.  Only run after
+         the lifecycleBeanProcessor has run: -->
+	<!--
+    5. 启用 IOC 容器中使用 shiro 的注解. 但必须在配置了 LifecycleBeanPostProcessor 之后才可以使用.
+    -->
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+		  depends-on="lifecycleBeanPostProcessor"/>
+	<bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securityManager"/>
+	</bean>
+	<!--
+    6. 配置 ShiroFilter.
+    6.1 id 必须和 web.xml 文件中配置的 DelegatingFilterProxy 的 <filter-name> 一致.
+                      若不一致, 则会抛出: NoSuchBeanDefinitionException. 因为 Shiro 会来 IOC 容器中查找和 <filter-name> 名字对应的 filter bean.
+    -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager"/>
+		<property name="loginUrl" value="/login"/>
+		<!--<property name="successUrl" value="/register"/>-->
+		<!--<property name="filterChainDefinitionMap" ref="filterChainDefinitionMap"></property>-->
+
+		<!--
+            配置哪些页面需要受保护.
+            以及访问这些页面需要的权限.
+            1). anon 可以被匿名访问
+            2). authc 必须认证(即登录)后才可能访问的页面.
+            3). logout 登出.
+            4). roles 角色过滤器
+        -->
+
+        <property name="filterChainDefinitions">
+            <value>
+                /register = anon
+                /login = anon
+				/doregister = anon
+                /dologin = anon
+                /logout = logout
+                # everything else requires authentication:
+				/article/compiler= authc
+            </value>
+        </property>
+
+	</bean>
+	<!-- 开启Spring的事务 -->
+	<!-- -事务管理器 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	<!-- 启用Spring事务注解 -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+
+	<!-- 验证码 -->
+	<bean id="captchaProducer" class="com.google.code.kaptcha.impl.DefaultKaptcha">
+		<property name="config">
+			<bean class="com.google.code.kaptcha.util.Config">
+				<constructor-arg>
+					<props>
+						<!-- 这里的颜色只支持标准色和rgb颜色，不可使用十六进制的颜色 -->
+						<!-- 是否有边框 -->
+						<prop key="kaptcha.border">no</prop>
+						<!-- 验证码文本字符颜色 -->
+						<prop key="kaptcha.textproducer.font.color">black</prop>
+						<!-- 验证码图片宽度 -->
+						<prop key="kaptcha.image.width">90</prop>
+						<!-- 验证码图片高度 -->
+						<prop key="kaptcha.image.height">45</prop>
+						<!-- 验证码文本字符大小 -->
+						<prop key="kaptcha.textproducer.font.size">24</prop>
+						<!-- session中存放验证码的key键 -->
+						<prop key="kaptcha.session.key">code</prop>
+						<!-- 验证码噪点颜色 -->
+						<prop key="kaptcha.noise.color">white</prop>
+						<!-- 验证码文本字符间距 -->
+						<prop key="kaptcha.textproducer.char.space">3</prop>
+						<!-- 验证码样式引擎 -->
+						<prop key="kaptcha.obscurificator.impl">com.google.code.kaptcha.impl.ShadowGimpy</prop>
+						<!-- 验证码文本字符长度 -->
+						<prop key="kaptcha.textproducer.char.length">4</prop>
+						<!-- 验证码文本字体样式 -->
+						<prop key="kaptcha.textproducer.font.names">宋体,楷体,微软雅黑</prop>
+					</props>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+</beans>

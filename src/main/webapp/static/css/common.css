@@ -1,0 +1,91 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+ul{
+    list-style-type: none;
+}
+/*超小屏幕*/
+@media only screen and (max-width: 768px){
+    .container{
+        width: 90%;
+    }
+    .header,.main,.footer{
+        width: 98%;
+    }
+    .hide_xs{
+        display: none!important;
+    }
+}
+/*小屏幕*/
+@media only screen and (max-width: 992px) and (min-width: 768px) {
+    .container{
+        width: 80%;
+    }
+    .header,.main,.footer{
+        width: 96%;
+    }
+    /*隐藏元素*/
+    .hide_sm{
+        display: none!important;
+    }
+}
+/*中屏幕*/
+@media only screen and (max-width: 1170px) and (min-width: 992px) {
+    .container{
+        width: 70%;
+    }
+    .header,.main,.footer{
+        width: 94%;
+    }
+    .hide_md{
+        display: none!important;
+    }
+
+}
+/*大屏幕*/
+@media only screen and (min-width: 1170px) {
+    .container{
+        width: 60%;
+    }
+    .header,.main,.footer{
+        width: 92%;
+    }
+    .hide_lg{
+        display: none!important;
+    }
+}
+body{
+    background: url("/static/images/bg.jpg") no-repeat center fixed,rgba(221, 201, 201, 0.5);
+    background-size: cover;
+    height: auto;
+}
+body:before{
+    content: '';
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(221, 201, 201, 0.5);
+    z-index: -1200;
+}
+.clearfix::after{
+    content: "";
+    clear: both;
+    display: block;
+}
+.clearfix::before{
+    content: "";
+    clear: both;
+    display: block;
+}
+blockquote{
+    background: #fff;
+    border-left: 5px solid;
+    padding-left:2%
+}
+.header,.footer,.content{
+    box-shadow: 0 0 15px #fff;
+}
+

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mytnt.dao.ArticleMapper">
+    <resultMap id="articleUserAndSort" type="Article">
+        <id column="a_id" property="aid"/>
+        <result column="user_id" property="userId"/>
+        <result column="a_title" property="atitle"/>
+        <result column="a_content" property="acontent"/>
+        <result column="a_time" property="atime"/>
+        <result column="a_info" property="ainfo"/>
+        <result column="a_status" property="astatus"/>
+        <result column="a_views" property="aviews"/>
+        <result column="a_comment_count" property="acommentCount"/>
+        <result column="a_like_count" property="alikeCount"/>
+        <association property="user" javaType="User">
+            <id column="id" property="id"/>
+            <result column="username" property="username"/>
+            <result column="avatar" property="avatar"/>
+            <result column="signature" property="signature"/>
+        </association>
+        <collection property="articleSorts" ofType="ArticleSort">
+            <id column="sort_id" property="sortId"/>
+            <result column="sort_name" property="sortName"/>
+        </collection>
+    </resultMap>
+    <resultMap id="article" type="Article">
+        <id column="a_id" property="aid"/>
+        <result column="user_id" property="userId"/>
+        <result column="a_title" property="atitle"/>
+        <result column="a_content" property="acontent"/>
+        <result column="a_time" property="atime"/>
+        <result column="a_info" property="ainfo"/>
+        <result column="a_status" property="astatus"/>
+        <result column="a_views" property="aviews"/>
+        <result column="a_comment_count" property="acommentCount"/>
+        <result column="a_like_count" property="alikeCount"/>
+    </resultMap>
+    <resultMap id="commentUser" type="Comment">
+        <id column="comment_id" property="commentId"/>
+        <result column="user_id" property="userId"/>
+        <result column="article_id" property="articleId"/>
+        <result column="comment_like_count" property="commentLikeCount"/>
+        <result column="comment_time" property="commentTime"/>
+        <result column="comment_content" property="commentContent"/>
+        <result column="parent_comment_id" property="parentCommentId"/>
+        <association property="user" javaType="User">
+            <id column="id" property="id"/>
+            <result column="username" property="username"/>
+            <result column="avatar" property="avatar"/>
+        </association>
+        <!--<collection property="comments" ofType="Comment">-->
+            <!--<id column="comment_id" property="commentId"/>-->
+            <!--<result column="user_id" property="userId"/>-->
+            <!--<result column="article_id" property="articleId"/>-->
+            <!--<result column="comment_like_count" property="commentLikeCount"/>-->
+            <!--<result column="comment_time" property="commentTime"/>-->
+            <!--<result column="comment_content" property="commentContent"/>-->
+            <!--<result column="parent_comment_id" property="parentCommentId"/>-->
+            <!--<association property="user" javaType="User">-->
+                <!--<id column="id" property="id"/>-->
+                <!--<result column="username" property="username"/>-->
+                <!--<result column="avatar" property="avatar"/>-->
+            <!--</association>-->
+        <!--</collection>-->
+    </resultMap>
+    <!--查询所有的分类-->
+    <select id="findSortAll"  resultType="ArticleSort">
+        SELECT * from t_article_sort
+    </select>
+    <!--由分类id查询-->
+    <select id="findSortById" resultType="ArticleSort">
+        SELECT * from t_article_sort WHERE sort_id=#{sortId}
+    </select>
+    <!--添加文章-->
+    <insert id="addArticle" parameterType="Article" useGeneratedKeys="true" keyProperty="aid">
+       INSERT INTO t_article (user_id,a_title,a_content,a_time) VALUES (#{userId},#{atitle},#{acontent},now())
+    </insert>
+    <!--添加文章所属分类-->
+    <insert id="addArticleCorrespondSort">
+       INSERT INTO t_article_correspond_sort (article_id,article_sort_id) VALUES (#{articleId},#{articleSortId})
+    </insert>
+    <!--查询所有文章-->
+    <select id="findArticleAll"  resultMap="articleUserAndSort">
+        SELECT a.*,u.`id`,u.`username`,u.`avatar`,u.`signature`,ats.`sort_name` FROM t_article a
+          LEFT OUTER JOIN t_user u ON a.`user_id`=u.`id`
+          LEFT OUTER JOIN t_article_correspond_sort acs ON a.`a_id`=acs.`article_id`
+          LEFT OUTER JOIN t_article_sort ats ON ats.`sort_id`=acs.`article_sort_id`
+          WHERE a.`a_status`=2
+          <if test="userId != null and userId != ''">
+              and a.`user_id`=#{userId}
+          </if>
+    </select>
+    <!--由id查询文章-->
+    <select id="findArticleBy"  resultMap="articleUserAndSort">
+        SELECT a.*,u.`id`,u.`username`,u.`avatar`,u.`signature`,ats.`sort_name` FROM t_article a
+            LEFT OUTER JOIN t_user u ON a.`user_id`=u.`id`
+            LEFT OUTER JOIN t_article_correspond_sort acs ON a.`a_id`=acs.`article_id`
+            LEFT OUTER JOIN t_article_sort ats ON ats.`sort_id`=acs.`article_sort_id`
+          WHERE a.`a_status`=2
+          <if test="aid!=null and aid != '' ">
+              and a.`a_id`=#{aid}
+          </if> <if test="sortName != null and sortName != ''">
+              and ats.`sort_name`=#{sortName}
+          </if>
+    </select>
+    <!--判断id是否能被查看-->
+    <select id="findArticleView"  resultMap="article">
+        SELECT * FROM t_article WHERE a_status=2 AND a_id=#{articleId}
+    </select>
+    <!--由文章和用户id判断是否点赞-->
+    <select id="findUserIfLike" resultType="int">
+        SELECT COUNT(*) FROM t_article_like WHERE article_id=#{articleId} AND user_id =#{userId}
+    </select>
+
+    <!--添加评论-->
+    <insert id="addCommentArticle" parameterType="Comment">
+        INSERT into t_comments (user_id,article_id,comment_content,parent_comment_id,comment_time)
+         VALUES (#{userId},#{articleId},#{commentContent},#{parentCommentId},now())
+    </insert>
+    <!--更新文章评论数-->
+    <update id="updateArticle" parameterType="Article">
+        UPDATE t_article
+        <set>
+            <if test="aviews!= null and aviews != '' ">
+                a_views = #{aviews},
+            </if>
+            <if test="acommentCount!= null and acommentCount!= '' ">
+                a_comment_count = #{acommentCount},
+            </if>
+            <if test="astatus!= null and astatus!= '' ">
+                a_status = #{astatus},
+            </if>
+            <if test="alikeCount != null and alikeCount!= '' ">
+                a_like_count = #{alikeCount},
+            </if>
+        </set>
+        WHERE a_id = #{aid}
+    </update>
+
+    <!--查询所有评论-->
+    <select id="findCommentArticle"  resultMap="commentUser">
+        SELECT c.*,u.id,u.username,u.avatar FROM t_comments c LEFT OUTER JOIN t_user u ON c.`user_id`= u.id WHERE c.`article_id`=#{articleId}
+    </select>
+    <!--查询单条评论信息-->
+    <select id="findCommentArticleBy"  resultMap="commentUser">
+        SELECT c.* FROM t_comments c WHERE c.`comment_id`=#{commentId}
+    </select>
+    <!--验证当前会话是否存在-->
+    <select id="findViewLog" resultType="int">
+        SELECT COUNT(*) FROM t_article_view_log WHERE session_id=#{sessionId} AND article_id=#{articleId}
+    </select>
+    <!--添加当前会话-->
+    <insert id="addViewLog">
+        INSERT INTO t_article_view_log (session_id,article_id) VALUES (#{sessionId},#{articleId})
+    </insert>
+    <!--添加文章点赞-->
+    <insert id="addArticleLike">
+        INSERT INTO t_article_like (article_id,user_id,create_time) VALUES (#{articleId},#{userId},now())
+    </insert>
+    <!--由评论和用户id判断是否点赞-->
+    <select id="findCommentIfLike" resultType="int">
+        SELECT COUNT(*) FROM t_comments_like WHERE comment_id=#{commentId}AND user_id =#{userId}
+    </select>
+    <!--由评论和用户id判断是否点赞-->
+    <insert id="addCommentLike">
+        INSERT INTO t_comments_like (comment_id,user_id,create_time) VALUES (#{commentId},#{userId},now())
+    </insert>
+    <!--更新点赞数量-->
+    <update id="updateCommentLike">
+        UPDATE t_comments set comment_like_count=#{commentLikeCount} WHERE comment_id=#{commentId}
+    </update>
+</mapper>

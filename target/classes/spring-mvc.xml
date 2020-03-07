@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:contenxt="http://www.springframework.org/schema/context"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- 扫描Controller所在的包 -->
+	<contenxt:component-scan base-package="com.mytnt.controller"/>
+
+	<!-- springMVC注解 -->
+	<mvc:annotation-driven  >
+		<!---定义消息转换器-->
+		<mvc:message-converters>
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>application/json;charset=UTF-8</value>
+					</list>
+				</property>
+			</bean>
+			<!--FastJsonHttpMessageConverter-->
+			<bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>text/html;charset=UTF-8</value>
+						<value>application/json;charset=UTF-8</value>
+					</list>
+				</property>
+				<property name="features">
+					<list>
+						<value>WriteDateUseDateFormat</value><!--yyyy-MM-dd HH:mm:ss-->
+					</list>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+	<mvc:default-servlet-handler/>
+	<mvc:resources mapping="/static/**" location="/static/"></mvc:resources>
+	<!-- 视图解析器:简化在Controller类编写的视图路径 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<!-- 前缀 -->
+		<property name="prefix" value="/WEB-INF/page/"/>
+		<!-- 后缀 -->
+		<property name="suffix" value=".jsp"/>
+	</bean>
+
+    <!-- 定义视图文件解析 html专用-->
+	<!-- html视图解析器 必须先配置freemarkerConfig,注意html是没有prefix前缀属性的 -->
+	<!--<bean id="freemarkerConfig"-->
+		  <!--class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">-->
+		<!--<property name="templateLoaderPath">-->
+			<!--<value>/WEB-INF/page/</value>-->
+		<!--</property>-->
+		<!--<property name="freemarkerSettings">-->
+			<!--<props>-->
+                <!--<prop key="template_update_delay">1</prop>-->
+                <!--<prop key="default_encoding">UTF-8</prop>&lt;!&ndash;解决中文乱码的关键&ndash;&gt;-->
+                <!--<prop key="number_format">0.##</prop>-->
+                <!--<prop key="datetime_format">yyyy-MM-dd HH:mm:ss</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+	<!--</bean>-->
+	<!--<bean id="htmlViewResolver"-->
+		  <!--class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">-->
+		<!--<property name="suffix" value=".html"></property>-->
+		<!--<property name="order" value="0"></property>-->
+		<!--<property name="contentType" value="text/html;charset=UTF-8"></property>-->
+	<!--</bean>-->
+
+	<!--配置文件上传视图解析器-->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!--设置编码格式-->
+		<property name="defaultEncoding" value="utf-8"/>
+		<!--设置文件最大的大小10M-->
+		<property name="maxInMemorySize" value="#{10*1024*1024}"/>
+	</bean>
+</beans>
