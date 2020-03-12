@@ -21,8 +21,8 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<Article> findArticleAll(String userId) {
-        return articleMapper.findArticleAll(userId);
+    public List<Article> findArticleAll(String userId,Integer page,Integer limit) {
+        return articleMapper.findArticleAll(userId,(page-1)*limit,limit);
     }
 
     @Override
@@ -51,9 +51,9 @@ public class ArticleServiceImpl implements ArticleService {
             String[] arr=sort.split(",");
             for(int i=0;i<arr.length;i++){
                 Integer aSortId= Integer.parseInt(arr[i]);
-                if(articleMapper.findSortById(aSortId)==null){
-                    throw new Exception("没有找到分类");
-                }
+//                if(articleMapper.findSortById(aSortId)==null){
+//                    throw new Exception("没有找到分类");
+//                }
                 articleMapper.addArticleCorrespondSort(aid,aSortId);
             }
             return 1;
@@ -64,6 +64,21 @@ public class ArticleServiceImpl implements ArticleService {
             return 0;
         }
 
+    }
+
+    @Override
+    public int findArticleCount(String userId) {
+        return articleMapper.findArticleCount(userId);
+    }
+
+    @Override
+    public List<Article> findArticleSort(String sortName, Integer page, Integer limit) {
+        return articleMapper.findArticleSort(sortName, (page-1)*limit,limit);
+    }
+
+    @Override
+    public int findArticleSortCount(String sortName) {
+        return articleMapper.findArticleSortCount(sortName);
     }
 
     @Override

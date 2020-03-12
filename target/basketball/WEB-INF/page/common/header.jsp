@@ -13,19 +13,22 @@
     <div class="hide_xs hide_sm menu">
         <ul>
             <li class="menu_item action"><a href="/">首页</a></li>
-            <li class="menu_item"><a href="#">NBA</a></li>
-            <li class="menu_item"><a href="#">CBA</a></li>
-            <li class="menu_item"><a href="#">学院派</a></li>
-            <li class="menu_item"><a href="#">街头派</a></li>
-            <li class="menu_item"><a href="#">视频</a></li>
-            <li class="menu_item"><a href="#">致胜宝</a></li>
-            <li class="menu_item"><a href="#">商城</a></li>
-            <li class="menu_item"><a href="#">联系</a></li>
+            <li class="menu_item"><a href="/article/sort?type=NBA">NBA</a></li>
+            <li class="menu_item"><a href="/article/sort?type=CBA">CBA</a></li>
+            <li class="menu_item"><a href="/article/sort?type=学院派">学院派</a></li>
+            <li class="menu_item"><a href="/article/sort?type=街头派">街头派</a></li>
+            <li class="menu_item"><a href="/article/sort?type=视频">视频</a></li>
+            <li class="menu_item"><a href="/article/sort?type=致胜宝">致胜宝</a></li>
+            <%-- <li class="menu_item"><a href="/mall">商城</a></li>--%>
+            <%--<li class="menu_item"><a href="#">联系</a></li>--%>
+            <shiro:hasRole name="superAdmin">
+                <li class="menu_item"><a href="/admin/adminView">后台</a></li>
+            </shiro:hasRole>
         </ul>
         <shiro:notAuthenticated>
             <div class="login_register">
-                <a href="http://localhost:8080/register" class="layui-btn btn_reg">注册</a>
-                <a href="http://localhost:8080/login" class="layui-btn layui-btn-normal btn_login">登录</a>
+                <a href="/register" class="layui-btn btn_reg">注册</a>
+                <a href="/login" class="layui-btn layui-btn-normal btn_login">登录</a>
             </div>
         </shiro:notAuthenticated>
         <shiro:authenticated>
@@ -38,5 +41,17 @@
                 </div>
             </div>
         </shiro:authenticated>
+    </div>
 </div>
-</div>
+<script>
+    for (let i of document.querySelectorAll(".menu li a")){
+        if (i.getAttribute("href")==window.location.pathname+decodeURIComponent(window.location.search)){
+//            console.log(i.parentElement.parentElement.children)
+            for (let j of i.parentElement.parentElement.children){
+//                console.log(j);
+                j.classList.remove('action');
+            }
+            i.parentElement.classList.add('action');
+        }
+    }
+</script>

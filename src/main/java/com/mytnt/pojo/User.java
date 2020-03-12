@@ -24,13 +24,13 @@ public class User implements Serializable{
     private Integer missNumber;
     private Date missTime;
     private List<Article> articles;
-    private Roles roles;
+    private List<Roles> roles;
 
-    public Roles getRoles() {
+    public List<Roles> getRoles() {
         return roles;
     }
 
-    public void setRoles(Roles roles) {
+    public void setRoles(List<Roles> roles) {
         this.roles = roles;
     }
 

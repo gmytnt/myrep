@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:aop="http://www.springframework.org/schema/aop" 
-	xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans.xsd
 	http://www.springframework.org/schema/context
 	http://www.springframework.org/schema/context/spring-context.xsd
@@ -12,7 +12,7 @@
 	http://www.springframework.org/schema/aop/spring-aop.xsd
 	http://www.springframework.org/schema/tx 
 	http://www.springframework.org/schema/tx/spring-tx.xsd">
-	
+
 	<!-- 读取jdbc.properties -->
 	<context:property-placeholder location="classpath:jdbc.properties"/>
 	<!-- mybatis配置驼峰形式的设置类 -->
@@ -31,7 +31,7 @@
 		<!-- 最大空闲连接 -->
 		<property name="maxIdle" value="20"></property>
 	</bean>
-	
+
 	<!-- 创建SqlSessionFactory对象 -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<!-- 关联连接池 -->
@@ -70,7 +70,7 @@
 		<property name="SqlSessionFactoryBeanName"
 				  value="sqlSessionFactory"/>
 	</bean>
-	
+
 	<!-- 开启Spring的IOC注解扫描 -->
 	<context:component-scan base-package="com.mytnt">
 		<context:exclude-filter type="annotation"
@@ -108,7 +108,7 @@
 	<bean id="authenticator"
 		  class="org.apache.shiro.authc.pam.ModularRealmAuthenticator">
 		<property name="authenticationStrategy">
-			<bean class="org.apache.shiro.authc.pam.FirstSuccessfulStrategy"></bean>
+			<bean class="org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy"></bean>
 		</property>
 	</bean>
 	<!--
@@ -155,6 +155,7 @@
 	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
 		<property name="securityManager" ref="securityManager"/>
 		<property name="loginUrl" value="/login"/>
+		<property name="unauthorizedUrl" value="/login"/>
 		<!--<property name="successUrl" value="/register"/>-->
 		<!--<property name="filterChainDefinitionMap" ref="filterChainDefinitionMap"></property>-->
 
@@ -167,17 +168,18 @@
             4). roles 角色过滤器
         -->
 
-        <property name="filterChainDefinitions">
-            <value>
-                /register = anon
-                /login = anon
+		<property name="filterChainDefinitions">
+			<value>
+				/register = anon
+				/login = anon
 				/doregister = anon
-                /dologin = anon
-                /logout = logout
-                # everything else requires authentication:
+				/dologin = anon
+				/logout = logout
+				# everything else requires authentication:
 				/article/compiler= authc
-            </value>
-        </property>
+				/admin/**=roles[superAdmin]
+			</value>
+		</property>
 
 	</bean>
 	<!-- 开启Spring的事务 -->

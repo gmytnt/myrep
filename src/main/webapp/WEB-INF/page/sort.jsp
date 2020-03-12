@@ -38,7 +38,7 @@
             <div class="content">
                 <div class="bbs_post">
                     <div class="bbs_header">
-                        <h3>最新消息</h3>
+                        <h3></h3>
                         <div class="search">
                             <input type="text" class="search_input" placeholder="输入关键词"/>
                             <select name="search_select" class="search_select">
@@ -101,6 +101,7 @@
     <%@include file="common/footer.jsp"%>
 </div>
 <script src="/static/plugin/layui/layui.js"></script>
+<script src="/static/js/header.js"></script>
 <script>
     //一般直接写在一个js文件中
     layui.use(['layer', 'form','jquery','carousel','laypage'], function(){
@@ -110,39 +111,8 @@
             ,laypage = layui.laypage
             ,carousel=layui.carousel;
 //            $(".header").load("/header");
-        /*文字动画*/
-        [...$('.logo_name').text()].reduce((pre, cur, index) => {
-            pre == index && ($('.logo_name').html(""));
-            let span = document.createElement("span");
-            span.textContent = cur;
-            $('.logo_name').append(span);
-        }, 0);
-        /*点击导航栏样式改变*/
-        $('.menu .menu_item').each(function () {
-            $(this).click(function () {
-                $('.menu_item').removeClass('action');
-                $(this).addClass('action');
-            });
-        });
-        /*小屏幕时候显示按钮*/
-        $('.menu_toggler').click(function () {
-            $('.menu').toggleClass("show");
-            $('.menu').toggleClass('hide_sm');
-            $('.menu').toggleClass('hide_xs');
-        });
-        /*获取屏幕变化值*/
-        $(window).on("resize",function () {
-            //获取窗口宽度
-            var clientW=$(window).width()+17;
-            console.log(clientW);
-            if(clientW>992){
-                $('.menu').removeClass("show");
-                $('.menu').addClass('hide_sm');
-                $('.menu').addClass('hide_xs');
-            };
-
-        });
-        $(window).trigger("resize");
+        let keyword=decodeURIComponent(window.location.search.substr(1));
+        $(".bbs_header h3").html(keyword.split("=")[1]);
         /*轮播图*/
         //改变下时间间隔、动画类型、高度
         carousel.render({
@@ -160,11 +130,11 @@
                 , count: count
                 , theme: '#e27111'
                 , layout: ['prev', 'page', 'next']
-                , limit: 3
+                , limit: 20
                 , jump: function (obj, first) {
                     if (!first) {
-                        $.get('/article/findArticleAll'
-                            , { page: obj.curr, limit: obj.limit}
+                        $.get('/article/findArticleSort'
+                            , {type:keyword.split("=")[1], page: obj.curr, limit: obj.limit}
                             , function (data) {
                                 showArticle(data.article);
                             });
@@ -174,8 +144,8 @@
         }
         $.ajax({
             type: "GET",
-            url: "/article/findArticleAll",
-            data:{page: 1, limit:3},
+            url: "/article/findArticleSort",
+            data:{type:keyword.split("=")[1],page: 1, limit:20},
             success: function(data){
 //                console.log(msg);
                 showArticle(data.article);

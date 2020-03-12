@@ -67,7 +67,9 @@ font-size: 18px;
     min-height: 700px;
 }
 .main .middle .content .bbs_post{
-    padding: 12px 4px 40px;;
+    padding: 12px 4px 40px;
+    display: flex;
+    flex-direction: column;
 }
 .main .middle .content .bbs_post .bbs_header{
     display: flex;

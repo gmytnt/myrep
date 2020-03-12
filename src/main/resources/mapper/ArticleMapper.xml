@@ -49,20 +49,6 @@
             <result column="username" property="username"/>
             <result column="avatar" property="avatar"/>
         </association>
-        <!--<collection property="comments" ofType="Comment">-->
-            <!--<id column="comment_id" property="commentId"/>-->
-            <!--<result column="user_id" property="userId"/>-->
-            <!--<result column="article_id" property="articleId"/>-->
-            <!--<result column="comment_like_count" property="commentLikeCount"/>-->
-            <!--<result column="comment_time" property="commentTime"/>-->
-            <!--<result column="comment_content" property="commentContent"/>-->
-            <!--<result column="parent_comment_id" property="parentCommentId"/>-->
-            <!--<association property="user" javaType="User">-->
-                <!--<id column="id" property="id"/>-->
-                <!--<result column="username" property="username"/>-->
-                <!--<result column="avatar" property="avatar"/>-->
-            <!--</association>-->
-        <!--</collection>-->
     </resultMap>
     <!--查询所有的分类-->
     <select id="findSortAll"  resultType="ArticleSort">
@@ -74,35 +60,66 @@
     </select>
     <!--添加文章-->
     <insert id="addArticle" parameterType="Article" useGeneratedKeys="true" keyProperty="aid">
-       INSERT INTO t_article (user_id,a_title,a_content,a_time) VALUES (#{userId},#{atitle},#{acontent},now())
+        INSERT INTO t_article (user_id,a_title,a_content,a_time) VALUES (#{userId},#{atitle},#{acontent},now())
     </insert>
     <!--添加文章所属分类-->
     <insert id="addArticleCorrespondSort">
-       INSERT INTO t_article_correspond_sort (article_id,article_sort_id) VALUES (#{articleId},#{articleSortId})
+        INSERT INTO t_article_correspond_sort (article_id,article_sort_id) VALUES (#{articleId},#{articleSortId})
     </insert>
     <!--查询所有文章-->
     <select id="findArticleAll"  resultMap="articleUserAndSort">
-        SELECT a.*,u.`id`,u.`username`,u.`avatar`,u.`signature`,ats.`sort_name` FROM t_article a
-          LEFT OUTER JOIN t_user u ON a.`user_id`=u.`id`
-          LEFT OUTER JOIN t_article_correspond_sort acs ON a.`a_id`=acs.`article_id`
-          LEFT OUTER JOIN t_article_sort ats ON ats.`sort_id`=acs.`article_sort_id`
-          WHERE a.`a_status`=2
-          <if test="userId != null and userId != ''">
-              and a.`user_id`=#{userId}
-          </if>
+        SELECT a.*,u.`id`,u.`username`,u.`avatar`,u.`signature` FROM t_article a
+        LEFT OUTER JOIN t_user u ON a.`user_id`=u.`id`
+        WHERE a.`a_status`=2
+        <if test="userId != null and userId != ''">
+            and a.`user_id`=#{userId}
+        </if>
+        limit #{page},#{limit}
+    </select>
+    <!--统计文章数量-->
+    <select id="findArticleCount"  resultType="int">
+        SELECT COUNT(*) FROM t_article a
+        LEFT OUTER JOIN t_user u ON a.`user_id`=u.`id`
+        WHERE a.`a_status`=2
+        <if test="userId != null and userId != ''">
+            and a.`user_id`=#{userId}
+        </if>
+    </select>
+    <!--查询分类所有文章-->
+    <select id="findArticleSort"  resultMap="articleUserAndSort">
+        SELECT a.*,u.`id`,u.`username`,u.`avatar`,u.`signature`,ats.`sort_name` FROM t_article_sort ats
+        LEFT OUTER JOIN t_article_correspond_sort acs ON ats.`sort_id`=acs.`article_sort_id`
+        LEFT OUTER JOIN t_article a ON a.`a_id`=acs.`article_id`
+        LEFT OUTER JOIN t_user u ON a.`user_id`=u.`id`
+        WHERE ats.`sort_name`=#{sortName} AND a.`a_status`=2
+        <!--<if test="userId != null and userId != ''">-->
+        <!--and a.`user_id`=#{userId}-->
+        <!--</if>-->
+        limit #{page},#{limit}
+    </select>
+    <!--统计分类文章数量-->
+    <select id="findArticleSortCount"  resultType="int">
+        SELECT COUNT(*) FROM t_article_sort ats
+        LEFT OUTER JOIN t_article_correspond_sort acs ON ats.`sort_id`=acs.`article_sort_id`
+        LEFT OUTER JOIN t_article a ON a.`a_id`=acs.`article_id`
+        LEFT OUTER JOIN t_user u ON a.`user_id`=u.`id`
+        WHERE ats.`sort_name`=#{sortName} AND a.`a_status`=2
+        <!--<if test="userId != null and userId != ''">-->
+        <!--and a.`user_id`=#{userId}-->
+        <!--</if>-->
     </select>
     <!--由id查询文章-->
     <select id="findArticleBy"  resultMap="articleUserAndSort">
         SELECT a.*,u.`id`,u.`username`,u.`avatar`,u.`signature`,ats.`sort_name` FROM t_article a
-            LEFT OUTER JOIN t_user u ON a.`user_id`=u.`id`
-            LEFT OUTER JOIN t_article_correspond_sort acs ON a.`a_id`=acs.`article_id`
-            LEFT OUTER JOIN t_article_sort ats ON ats.`sort_id`=acs.`article_sort_id`
-          WHERE a.`a_status`=2
-          <if test="aid!=null and aid != '' ">
-              and a.`a_id`=#{aid}
-          </if> <if test="sortName != null and sortName != ''">
-              and ats.`sort_name`=#{sortName}
-          </if>
+        LEFT OUTER JOIN t_user u ON a.`user_id`=u.`id`
+        LEFT OUTER JOIN t_article_correspond_sort acs ON a.`a_id`=acs.`article_id`
+        LEFT OUTER JOIN t_article_sort ats ON ats.`sort_id`=acs.`article_sort_id`
+        WHERE a.`a_status`=2
+        <if test="aid!=null and aid != '' ">
+            and a.`a_id`=#{aid}
+        </if> <if test="sortName != null and sortName != ''">
+        and ats.`sort_name`=#{sortName}
+    </if>
     </select>
     <!--判断id是否能被查看-->
     <select id="findArticleView"  resultMap="article">

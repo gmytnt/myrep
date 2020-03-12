@@ -22,9 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by meiyan on 2020/2/23.
- */
 @Controller
 @RequestMapping("/article/")
 public class ArticleController {
@@ -35,6 +32,10 @@ public class ArticleController {
     @RequestMapping("compiler")
     public String compiler(){
         return "compiler";
+    }
+    @RequestMapping("sort")
+    public String sort(){
+        return "sort";
     }
     /*查询所有分类*/
     @RequestMapping("sortAll")
@@ -50,6 +51,8 @@ public class ArticleController {
     public String details(){
         return "details";
     }
+
+
     /*添加文章*/
     @RequestMapping(value = "savearticle",method = RequestMethod.POST)
     @ResponseBody
@@ -68,7 +71,7 @@ public class ArticleController {
             int num=articleService.addArticle(article,sort);
             if(num>0){
                 resultMap.put("code","1");
-                resultMap.put("message","文章发布成功，审核中");
+                resultMap.put("message","文章发布成功，等待审核");
             }else {
                 resultMap.put("code","2");
                 resultMap.put("message","文章发布失败，再试一次");
@@ -80,19 +83,39 @@ public class ArticleController {
     /*查询所有文章*/
     @RequestMapping("findArticleAll")
     @ResponseBody
-    public Object findArticleAll(){
-        Map<String, List<Article>> resultMap = new HashMap<>();
-        List<Article> article = articleService.findArticleAll(null);
+    public Object findArticleAll(@RequestParam(value = "page",required = false)Integer page,
+                                 @RequestParam(value = "limit",required = false)Integer limit){
+        Map<String, Object> resultMap = new HashMap<>();
+        List<Article> article = articleService.findArticleAll(null,page,limit);
+        int count=articleService.findArticleCount(null);
         resultMap.put("article",article);
+        resultMap.put("count",count);
+        return JSONObject.toJSONString(resultMap);
+    }
+    /*查询分类所有文章*/
+    @RequestMapping("findArticleSort")
+    @ResponseBody
+    public Object findArticleSort(@RequestParam("type")String type,@RequestParam(value = "page",required = false)Integer page,
+                                  @RequestParam(value = "limit",required = false)Integer limit){
+        Map<String, Object> resultMap = new HashMap<>();
+        System.out.println(type);
+        List<Article> article = articleService.findArticleSort(type,page,limit);
+
+        int count=articleService.findArticleSortCount(type);
+        resultMap.put("article",article);
+        resultMap.put("count",count);
         return JSONObject.toJSONString(resultMap);
     }
     /*查询用户所有文章*/
     @RequestMapping("findArticleUserAll")
     @ResponseBody
-    public Object findArticleUserAll(@RequestParam(value = "uid",required=true)String userId){
-        Map<String, List<Article>> resultMap = new HashMap<>();
+    public Object findArticleUserAll(@RequestParam(value = "uid",required=true)String userId,
+                                     @RequestParam(value = "page",required = false)Integer page,
+                                     @RequestParam(value = "limit",required = false)Integer limit){
+        Map<String, Object> resultMap = new HashMap<>();
         if(userId!=null&&userId!=""){
-            List<Article> article = articleService.findArticleAll(userId);
+            System.out.print(limit+"显示条数");
+            List<Article> article = articleService.findArticleAll(userId,page,limit);
             resultMap.put("article",article);
         }
         return JSONObject.toJSONString(resultMap);

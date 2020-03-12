@@ -56,7 +56,7 @@
                     <ul class="bbs_post_list">
 
                     </ul>
-                    <div id="demo1"></div>
+                    <div id="page"></div>
                 </div>
             </div>
         </div>
@@ -152,32 +152,50 @@
             ,height: '260px'
             ,width: "100%"
         });
+
         //总页数大于页码总数
-        laypage.render({
-            elem: 'demo1'
-            ,count: 70 //数据总数
-            ,jump: function(obj){
-                console.log(obj)
-            }
-        });
+        function pages(count) {
+            laypage.render({
+                elem: 'page'
+                , count: count
+                , theme: '#e27111'
+                , layout: ['prev', 'page', 'next']
+                , limit: 3
+                , jump: function (obj, first) {
+                    if (!first) {
+                        $.get('/article/findArticleAll'
+                            , { page: obj.curr, limit: obj.limit}
+                            , function (data) {
+                                showArticle(data.article);
+                            });
+                    }
+                }
+            })
+        }
         $.ajax({
             type: "GET",
             url: "/article/findArticleAll",
-            success: function(msg){
+            data:{page: 1, limit:3},
+            success: function(data){
 //                console.log(msg);
-                showArticle(msg.article)
+                showArticle(data.article);
+                pages(data.count);
             }
         });
 
         function showArticle(data) {
             let ul=$('.bbs_post_list');
             ul.empty();
-            for(let i of data){
+            if(data.length>0) {
+                for (let i of data) {
 //                console.log(i);
-                let li=$('<li class="bbs_post_item"><a href="/user?uid='+i.user.id+'" uid="'+i.user.id+'"><img src="'+i.user.avatar+'"></a>' +
-                    '<div class="post"><p class="post_summary"><a href="/article/details?aid='+i.aid+'" aid="'+i.aid+'">'+i.atitle+'</a></p>' +
-                    '<div class="post_note"><span>发于&nbsp;'+dateFormat(new Date(i.atime))+'</span>&nbsp;&nbsp;&nbsp;&nbsp;<span>赞&nbsp;'+i.alikeCount+'</span>&nbsp;&nbsp;&nbsp;&nbsp;<span>评论&nbsp;'+i.acommentCount+'</span>&nbsp;&nbsp;&nbsp;&nbsp;<span>阅读&nbsp;'+i.aviews+'</span></div></div></li>')
-                ul.append(li);
+                    let li = $('<li class="bbs_post_item"><a href="/user?uid=' + i.user.id + '" uid="' + i.user.id + '"><img src="' + i.user.avatar + '"></a>' +
+                        '<div class="post"><p class="post_summary"><a href="/article/details?aid=' + i.aid + '" aid="' + i.aid + '">' + i.atitle + '</a></p>' +
+                        '<div class="post_note"><span>发于&nbsp;' + dateFormat(new Date(i.atime)) + '</span>&nbsp;&nbsp;&nbsp;&nbsp;<span>赞&nbsp;' + i.alikeCount + '</span>&nbsp;&nbsp;&nbsp;&nbsp;<span>评论&nbsp;' + i.acommentCount + '</span>&nbsp;&nbsp;&nbsp;&nbsp;<span>阅读&nbsp;' + i.aviews + '</span></div></div></li>')
+                    ul.append(li);
+                }
+            }else {
+                ul.append('<li><p>没有任何文章</p></li>');
             }
 
         }

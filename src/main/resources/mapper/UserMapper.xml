@@ -31,15 +31,38 @@
             <result column="a_like_count" property="alikeCount"/>
         </collection>
     </resultMap>
+    <resultMap id="userAndRole" type="User">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="telephone" column="telephone"/>
+        <result property="salt" column="salt"/>
+        <result property="createIp" column="create_ip"/>
+        <result property="createTime" column="create_time"/>
+        <result property="status" column="status"/>
+        <result property="email" column="email"/>
+        <result property="sex" column="sex"/>
+        <result property="qq" column="qq"/>
+        <result property="signature" column="signature"/>
+        <result property="avatar" column="avatar"/>
+        <result property="missNumber" column="miss_number"/>
+        <result property="missTime" column="miss_time"/>
+        <collection property="roles" ofType="Roles">
+            <id column="roles_id" property="roleId"/>
+            <result column="roles_name" property="roleName"/>
+        </collection>
+    </resultMap>
     <!--查询用户名是否存在-->
     <select id="findUserName"
-            resultType="User">
-        select * from t_user WHERE username=#{username}
+            resultMap="userAndRole">
+        SELECT u.*,r.* FROM t_user u LEFT OUTER JOIN t_user_roles ur ON u.`id`=ur.`user_id`
+        LEFT OUTER JOIN	t_roles r ON ur.`role_id`=r.`roles_id` WHERE username=#{username}
     </select>
     <!--查询手机是否存在-->
     <select id="findtelePhone"
-            resultType="User">
-        select * from t_user WHERE telephone=#{telephone}
+            resultMap="userAndRole">
+        SELECT u.*,r.* FROM t_user u LEFT OUTER JOIN t_user_roles ur ON u.`id`=ur.`user_id`
+        LEFT OUTER JOIN	t_roles r ON ur.`role_id`=r.`roles_id` WHERE telephone=#{telephone}
     </select>
     <!--查询用户是否存在-->
     <select id="findUserId"

@@ -50,12 +50,8 @@
 </div>
 <script src="/static/plugin/layui/layui.js"></script>
 <script type="text/javascript" src="/static/plugin/editor/wangEditor.js"></script>
-<script src="https://cdn.bootcss.com/js-xss/0.3.3/xss.js"></script>
-<script type="text/javascript">
-
-
-
-</script>
+<script type="text/javascript" src="/static/js/header.js"></script>
+<script src="/static/js/tools.js"></script>
 
 <script>
     //一般直接写在一个js文件中
@@ -69,38 +65,6 @@
         var E = window.wangEditor
         var editor = new E('#editor')
         editorModify(editor);
-        /*创建编辑器*/
-        function editorModify(data) {
-            // 通过 url 参数配置 debug 模式。url 中带有 wangeditor_debug_mode=1 才会开启 debug 模式
-            editor.customConfig.debug = location.href.indexOf('wangeditor_debug_mode=1') > 0
-            editor.customConfig.uploadImgServer = '/uploadFile';  // 上传图片到服务器
-            //         editor.customConfig.uploadImgShowBase64 = true   // 使用 base64 保存图片
-            // 隐藏“网络图片”tab
-            editor.customConfig.showLinkImg = false;
-            editor.customConfig.height = 1000
-            editor.customConfig.uploadFileName = 'file';
-            // 忽略粘贴内容中的图片
-            editor.customConfig.pasteIgnoreImg = true;
-            editor.customConfig.menus = [
-                'head',  // 标题
-                'bold',  // 粗体
-                'fontSize',  // 字号
-                'fontName',  // 字体
-                'italic',  // 斜体
-                'underline',  // 下划线
-                'strikeThrough',  // 删除线
-                'foreColor',  // 文字颜色
-                'backColor',  // 背景颜色
-                'link',  // 插入链接
-                'justify',  // 对齐方式
-                'emoticon',  // 表情
-                'image',  // 插入图片
-                'table',  // 表格
-                'undo',  // 撤销
-                'redo'  // 重复
-            ]
-            editor.create();
-        }
         //自定义验证规则
         form.verify({
             title: function(value){
@@ -144,25 +108,31 @@
             var sort = $('input:checkbox[name="sort"]:checked').map(function () {
                 return $(this).val();
             }).get().join(",");
-            console.log(content);
-            console.log(sort);
-            console.log(title);
+            if(title==""){
+                layer.msg("标题不能为空",{icon:5});
+                return
+            }
             if(sort==""){
-                console.log("至少选中一个分类");
+                layer.msg("至少选中一个分类",{icon:5});
                 return;
             }
             if(content==""){
-                console.log("内容不能为空");
-                return
-            }
-            if(title==""){
-                console.log("标题不能为空");
+                layer.msg("内容不能为空",{icon:5});
                 return
             }
             $.post("/article/savearticle",{
                 "sort":sort,"title":title,"content":content
             },function (data) {
                 console.log(data);
+                if(data.code=="3"){
+                    layer.msg(data.message,{icon:5});
+                    setTimeout('window.location.href="/login"',500);
+                }else if(data.code=="1"){
+                    layer.msg(data.message,{icon:6});
+                    setTimeout('window.location.reload()',500);
+                }else {
+                    layer.msg(data.message,{icon:5});
+                }
             });
         });
         /*文件上传*/

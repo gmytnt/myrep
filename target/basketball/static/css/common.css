@@ -88,4 +88,11 @@ blockquote{
 .header,.footer,.content{
     box-shadow: 0 0 15px #fff;
 }
-
+#page{
+    align-self: flex-end;
+    margin-top: 40px;
+}
+#page a,#page span{
+    height: 40px;
+    line-height: 40px;
+}
