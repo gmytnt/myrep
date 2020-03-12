@@ -70,9 +70,13 @@
         select * from t_user WHERE id=#{userId}
     </select>
     <!--添加用户-->
-    <insert id="addUser" parameterType="User">
+    <insert id="addUser" parameterType="User" useGeneratedKeys="true" keyProperty="id">
         INSERT into t_user (username,password,telephone,salt,create_ip,create_time)
          VALUES (#{username},#{password},#{telephone},#{salt},#{createIp},now())
+    </insert>
+    <!--添加用户角色-->
+    <insert id="addUserRoles">
+        INSERT INTO t_user_roles (user_id,role_id) VALUE (#{userId},3)
     </insert>
     <!--验证手机是否多次获取验证码-->
     <select id="findtelePhoneCount"

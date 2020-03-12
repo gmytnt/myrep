@@ -4,6 +4,8 @@ import com.mytnt.pojo.RegisterLog;
 import com.mytnt.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.List;
 
@@ -29,8 +31,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int addUser(User user) {
-        return userMapper.addUser(user);
+        try {
+            userMapper.addUser(user);
+            userMapper.addUserRoles(user.getId());
+            return 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            //手动提交事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return 0;
+        }
+
     }
 
     @Override

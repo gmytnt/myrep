@@ -19,6 +19,8 @@ public interface UserMapper {
     public User findUserId(@Param("userId") Integer userId);
     /*t添加用户*/
     public int addUser(User addUser);
+    /*t添加用户*/
+    public int addUserRoles(@Param("userId") Integer userId);
     /*查询发送次数*/
     public RegisterLog findtelePhoneCount(@Param("telephone") String telephone);/*查询发送次数*/
     public int findRegisterLogIp(@Param("ip") String ip);
