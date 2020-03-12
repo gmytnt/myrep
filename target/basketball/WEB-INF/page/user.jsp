@@ -51,6 +51,7 @@
                     <ul class="bbs_post_list">
 
                     </ul>
+
                 </div>
             </div>
         </div>
@@ -93,10 +94,11 @@
 <script src="/static/js/header.js"></script>
 <script>
     //一般直接写在一个js文件中
-    layui.use(['layer', 'form','jquery','carousel'], function(){
+    layui.use(['layer', 'form','jquery','carousel','laypage'], function(){
         var layer = layui.layer
             ,form = layui.form
             ,$=layui.jquery
+            ,laypage = layui.laypage
             ,carousel=layui.carousel;
 //            $(".header").load("/header");
 
@@ -115,9 +117,10 @@
         $.ajax({
             type: "GET",
             url: "/article/findArticleUserAll?" + keyword,
-            success: function (data) {
-//                console.log(data);
-                showArticle(data)
+            data:{uid:keyword.split("=")[1],page: 1, limit:20},
+            success: function(data) {
+                showArticle(data);
+                pages(data.count);
             }
         });
         $.ajax({
@@ -135,6 +138,25 @@
                 console.log(data);
             }
         });
+        //总页数大于页码总数
+        function pages(count) {
+            laypage.render({
+                elem: 'page'
+                , count: count
+                , theme: '#e27111'
+                , layout: ['prev', 'page', 'next']
+                , limit: 20
+                , jump: function (obj, first) {
+                    if (!first) {
+                        $.get('/article/findArticleSort'
+                            , {type:keyword.split("=")[1], page: obj.curr, limit: obj.limit}
+                            , function (data) {
+                                showArticle(data.article);
+                            });
+                    }
+                }
+            })
+        }
         /*点击导航栏样式改变*/
         $('.nav .nav_item').each(function () {
             $(this).click(function () {
@@ -142,14 +164,23 @@
                 $(this).addClass('action');
                 let url=$(this).children('a').data("url");
                 console.log(url);
-                $.get(url+"?"+keyword,function (data) {
-                    console.log(data);
-                    if(url=="/article/findArticleUserAll"){
+                if(url=="/article/findArticleUserAll"){
+                    $.ajax({
+                        type: "GET",
+                        url: url,
+                        data:{uid:keyword.split("=")[1],page: 1, limit:20},
+                        success: function(data){
+                            console.log(data);
                         showArticle(data);
-                    }else{
+                        pages(data.count);
+                        }
+                    });
+                }else {
+                    $.get(url+"?"+keyword,function (data) {
+                        console.log(data);
                         showAttentionUserInfo(data);
-                    }
-                })
+                    })
+                }
             });
         });
         function userInfo(data) {
@@ -182,6 +213,7 @@
                         '<div class="post_note"><span>发于&nbsp;' + dateFormat(new Date(i.atime)) + '</span>&nbsp;&nbsp;&nbsp;&nbsp;<span>赞&nbsp;' + i.alikeCount + '</span>&nbsp;&nbsp;&nbsp;&nbsp;<span>评论&nbsp;' + i.acommentCount + '</span>&nbsp;&nbsp;&nbsp;&nbsp;<span>阅读&nbsp;' + i.aviews + '</span></div></div></li>')
                     ul.append(li);
                 }
+                ul.append('<div id="page"></div>');
             }else{
                 ul.append('<li><p>没有任何文章</p></li>');
             }

@@ -117,6 +117,8 @@ public class ArticleController {
             System.out.print(limit+"显示条数");
             List<Article> article = articleService.findArticleAll(userId,page,limit);
             resultMap.put("article",article);
+            int count=articleService.findArticleCount(userId);
+            resultMap.put("count",count);
         }
         return JSONObject.toJSONString(resultMap);
     }
