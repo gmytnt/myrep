@@ -74,7 +74,7 @@
                 return;
             }
             $.post('/verification', {"code": code, "telephone": telephone}, function (data) {
-                console.log(data);
+                layer.msg(data.message, {icon: 6});
             })
         })
         $('.login_btn').click(function () {
@@ -86,30 +86,35 @@
             console.log(code);
             console.log(telephone);
             if (code == '') {
-                console.log("验证码为空");
+                layer.msg("验证码为空", {icon: 6});
                 return;
             };
             if (username == '') {
-                console.log("用户不能为空");
+                layer.msg("用户不能为空", {icon: 6});
                 return;
             };
             if (pwd == '' || repwd == '') {
-                console.log("密码不能为空");
+                layer.msg("密码不能为空", {icon: 6});
                 return;
             } else if (pwd != repwd) {
-                console.log("密码不一致");
+                layer.msg("密码不一致", {icon: 6});
                 return;
             };
 
             if (telephone == '' || !/^1[3|4|5|6|7|8|9][0-9]{9}$/.test(telephone)) {
-                console.log("shou");
+                layer.msg("输入手机号码", {icon: 6});
                 return;
             };
             $.post('/doregister', {
                 "username": username, "code": code, "telephone": telephone,
                 "password": pwd, "repassword": repwd,
             }, function (data) {
-                console.log(data);
+                if (data.code == "1") {
+                    layer.msg(data.message, {icon: 6});
+                    window.location.href="/"
+                }else {
+                    layer.msg(data.message, {icon: 5});
+                }
             });
         });
     });
