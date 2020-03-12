@@ -160,7 +160,7 @@
                 , count: count
                 , theme: '#e27111'
                 , layout: ['prev', 'page', 'next']
-                , limit: 3
+                , limit: 20
                 , jump: function (obj, first) {
                     if (!first) {
                         $.get('/article/findArticleAll'
@@ -175,7 +175,7 @@
         $.ajax({
             type: "GET",
             url: "/article/findArticleAll",
-            data:{page: 1, limit:3},
+            data:{page: 1, limit:20},
             success: function(data){
 //                console.log(msg);
                 showArticle(data.article);
