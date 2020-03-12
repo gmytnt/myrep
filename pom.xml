@@ -57,12 +57,16 @@
     </dependency>
 
   <!-- 数据库连接池 -->
-  <dependency>
+<!--  <dependency>
     <groupId>com.mchange</groupId>
     <artifactId>c3p0</artifactId>
     <version>0.9.5.2</version>
-  </dependency>
-
+  </dependency>-->
+    <dependency>
+      <groupId>com.hazelcast</groupId>
+      <artifactId>hazelcast</artifactId>
+      <version>3.11.2</version>
+    </dependency>
   <!-- MyBatis -->
   <dependency>
     <groupId>org.mybatis</groupId>
@@ -281,6 +285,11 @@
       <groupId>net.sf.ehcache</groupId>
       <artifactId>ehcache-core</artifactId>
       <version>2.6.10</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tencentcloudapi</groupId>
+      <artifactId>tencentcloud-sdk-java</artifactId>
+      <version>3.1.8</version>
     </dependency>
   </dependencies>
 
