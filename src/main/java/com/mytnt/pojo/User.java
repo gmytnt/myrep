@@ -15,6 +15,8 @@ public class User implements Serializable{
     private Date createTime;
     private String loginIp;
     private Date loginTime;
+    private String lastIp;
+    private Date lastTime;
     private String status;
     private String email;
     private Integer sex;
@@ -178,6 +180,18 @@ public class User implements Serializable{
         this.missTime = missTime;
     }
 
+    public String getLastIp() {
+        return lastIp;
+    }
+
+    public void setLastIp(String lastIp) {
+        this.lastIp = lastIp;
+    }
+
+    public Date getLastTime() {
+        return lastTime;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -190,6 +204,8 @@ public class User implements Serializable{
                 ", createTime=" + createTime +
                 ", loginIp='" + loginIp + '\'' +
                 ", loginTime=" + loginTime +
+                ", lastIp='" + lastIp + '\'' +
+                ", lastTime=" + lastTime +
                 ", status='" + status + '\'' +
                 ", email='" + email + '\'' +
                 ", sex=" + sex +
@@ -198,6 +214,13 @@ public class User implements Serializable{
                 ", avatar='" + avatar + '\'' +
                 ", missNumber=" + missNumber +
                 ", missTime=" + missTime +
+                ", articles=" + articles +
+                ", roles=" + roles +
                 '}';
+    }
+
+    public void setLastTime(Date lastTime) {
+        this.lastTime = lastTime;
+
     }
 }

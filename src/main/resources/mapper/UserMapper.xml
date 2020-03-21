@@ -10,6 +10,10 @@
         <result property="salt" column="salt"/>
         <result property="createIp" column="create_ip"/>
         <result property="createTime" column="create_time"/>
+        <result property="lastIp" column="last_ip"/>
+        <result property="lastTime" column="last_time"/>
+        <result property="loginIp" column="login_ip"/>
+        <result property="loginTime" column="login_time"/>
         <result property="status" column="status"/>
         <result property="email" column="email"/>
         <result property="sex" column="sex"/>
@@ -39,6 +43,10 @@
         <result property="salt" column="salt"/>
         <result property="createIp" column="create_ip"/>
         <result property="createTime" column="create_time"/>
+        <result property="lastIp" column="last_ip"/>
+        <result property="lastTime" column="last_time"/>
+        <result property="loginIp" column="login_ip"/>
+        <result property="loginTime" column="login_time"/>
         <result property="status" column="status"/>
         <result property="email" column="email"/>
         <result property="sex" column="sex"/>
@@ -48,8 +56,8 @@
         <result property="missNumber" column="miss_number"/>
         <result property="missTime" column="miss_time"/>
         <collection property="roles" ofType="Roles">
-            <id column="roles_id" property="roleId"/>
-            <result column="roles_name" property="roleName"/>
+            <id column="roles_id" property="rolesId"/>
+            <result column="roles_name" property="rolesName"/>
         </collection>
     </resultMap>
     <!--查询用户名是否存在-->
@@ -71,8 +79,8 @@
     </select>
     <!--添加用户-->
     <insert id="addUser" parameterType="User" useGeneratedKeys="true" keyProperty="id">
-        INSERT into t_user (username,password,telephone,salt,create_ip,create_time)
-         VALUES (#{username},#{password},#{telephone},#{salt},#{createIp},now())
+        INSERT into t_user (username,password,telephone,salt,create_ip,create_time,avatar)
+         VALUES (#{username},#{password},#{telephone},#{salt},#{createIp},now(),#{avatar})
     </insert>
     <!--添加用户角色-->
     <insert id="addUserRoles">
@@ -91,7 +99,11 @@
     <insert id="addRegisterLog" parameterType="RegisterLog">
         INSERT INTO t_register_log (ip_address,telephone,frequency,register_time) VALUES (#{ipAddress},#{telephone},#{frequency},now())
     </insert>
-    <!--验证手机是否多次获取验证码-->
+    <!--修改登录时修改信息-->
+    <update id="updateLoginUser" parameterType="User">
+        update t_user set last_ip=#{lastIp},last_time=#{lastTime},login_ip=#{loginIp},login_time=#{loginTime} where id=#{id}
+    </update>
+    <!--修改注册日志-->
     <update id="updateRegisterLog" parameterType="RegisterLog">
         update t_register_log set frequency=#{frequency},ip_address=#{ipAddress},register_time=now() where id=#{id}
     </update>

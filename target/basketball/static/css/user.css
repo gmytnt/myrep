@@ -240,7 +240,16 @@ font-size: 18px;
     height: 100%;
     width: 100%;
 }
-
+.info_item{
+    display: flex;
+    padding: 10px 14%;
+    font-size: 20px;
+    justify-content: space-between;
+    align-items: center;
+}
+.info_item input{
+    padding: 6px;
+}
 /*主体样式*/
 /*尾部样式*/
 .footer{

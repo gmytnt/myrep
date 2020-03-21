@@ -5,6 +5,7 @@ import com.google.code.kaptcha.Constants;
 import com.mytnt.pojo.RegisterLog;
 import com.mytnt.pojo.User;
 import com.mytnt.service.UserService;
+import com.mytnt.tool.SendSms;
 import com.mytnt.tool.Tools;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -55,7 +56,7 @@ public class UserController {
     /*登录*/
     @RequestMapping(value = "dologin",method = RequestMethod.POST)
     @ResponseBody
-    public Object doLogin(@RequestParam(value = "telephone") String telephone,@RequestParam(value = "password") String password){
+    public Object doLogin(HttpServletRequest request,@RequestParam(value = "telephone") String telephone,@RequestParam(value = "password") String password){
         Map<String, String> resultMap = new HashMap<String, String>();
         Subject currentUser = SecurityUtils.getSubject();
         if (!currentUser.isAuthenticated()) {
@@ -66,6 +67,14 @@ public class UserController {
             try {
                 // 执行登录.
                 currentUser.login(token);
+                User user = (User) currentUser.getPrincipal();
+                System.out.println(user);
+                user.setLastIp(user.getLoginIp());
+                user.setLastTime(user.getLoginTime());
+                user.setLoginIp(Tools.getIpAddr(request));
+                user.setLoginTime(new Date());
+                System.out.println(user);
+                userService.updateLoginUser(user);
                 resultMap.put("code","1");
                 resultMap.put("message","成功登录");
             }
@@ -87,7 +96,7 @@ public class UserController {
     @RequestMapping(value = "doregister",method = RequestMethod.POST)
     @ResponseBody
     public Object doRegister(HttpServletRequest request,String username,
-                               String password,String repassword,String telephone,String code){
+                             String password,String repassword,String telephone,String code){
         Map<String, String> resultMap = new HashMap<String, String>();
         HttpSession session = request.getSession();
         System.out.println(session.getAttribute("telephoneCode"));
@@ -119,7 +128,7 @@ public class UserController {
                 resultMap.put("code","2");
                 resultMap.put("message","两次密码不一致");
             }else {
-               // UUID类会生成一个32位的字符串，而且永远不会重复
+                // UUID类会生成一个32位的字符串，而且永远不会重复
                 String salt= UUID.randomUUID().toString().replaceAll("-","");
                 System.out.println(salt);
                 String md5Pwd=Tools.md5Pwd(password,salt);
@@ -131,6 +140,7 @@ public class UserController {
                 user.setSalt(salt);
                 user.setUsername(username);
                 user.setTelephone(telephone);
+                user.setAvatar("/static/images/default.jpg");
                 if(userService.addUser(user)>0){
                     resultMap.put("code","1");
                     resultMap.put("message","注册成功");
@@ -185,12 +195,19 @@ public class UserController {
                         registerLog.setFrequency(1);
                         registerLog.setIpAddress(ip);
                         registerLog.setTelephone(telephone);
-                        userService.addRegisterLog(registerLog);
-                        System.out.println(registerLog);
-                        System.out.println("存储短信记录");
-                        session.setAttribute("telephoneCode",teleCodeNum);
-                        session.removeAttribute(Constants.KAPTCHA_SESSION_KEY);
-                        resultMap.put("message","短信以发送，注意查收手机验证码");
+                        String status=SendSms.sendSms(telephone,String.valueOf(codeNum),"5");
+                        System.out.println(status+"返回值");
+                        if ("ok".equalsIgnoreCase("ok")){
+                            userService.addRegisterLog(registerLog);
+                            System.out.println(registerLog);
+                            System.out.println("存储短信记录");
+                            session.setAttribute("telephoneCode",teleCodeNum);
+                            session.removeAttribute(Constants.KAPTCHA_SESSION_KEY);
+                            resultMap.put("message","短信以发送，注意查收手机验证码");
+                        }else {
+                        resultMap.put("code","2");
+                        resultMap.put("message","短信无法发送，请重新");
+                        }
                     }else {
                         resultMap.put("code","2");
                         resultMap.put("message","当前操作过于频繁");
@@ -217,12 +234,19 @@ public class UserController {
                                 rgl.setFrequency(1);
                                 rgl.setIpAddress(ip);
                             }
+                            String status=SendSms.sendSms(telephone,String.valueOf(codeNum),"5");
+                            if ("ok".equalsIgnoreCase(status)){
                             userService.updateRegisterLog(rgl);
                             session.setAttribute("telephoneCode",teleCodeNum);
                             System.out.println("频率少");
                             System.out.println(rgl);
                             session.removeAttribute(Constants.KAPTCHA_SESSION_KEY);
                             resultMap.put("message","短信以发送，注意查收手机验证码");
+                            }else {
+                            resultMap.put("code","2");
+                            resultMap.put("message","短信无法发送，请重新");
+                            }
+
                         }else {
                             /*手机号验证码获取多次时，看是否在限制时间内*/
                             if(time.getTime()-registerTime.getTime()<60*1*60*3*1000){
@@ -232,11 +256,18 @@ public class UserController {
                             }else {
                                 rgl.setFrequency(1);
                                 rgl.setIpAddress(ip);
+                                String status=SendSms.sendSms(telephone,String.valueOf(codeNum),"5");
+                                if ("ok".equalsIgnoreCase(status)){
                                 userService.updateRegisterLog(rgl);
                                 session.setAttribute("telephoneCode",teleCodeNum);
                                 resultMap.put("message","短信以发送，注意查收手机验证码");
                                 session.removeAttribute(Constants.KAPTCHA_SESSION_KEY);
                                 System.out.println("过时间限制频率");
+                                }else {
+                                resultMap.put("code","2");
+                                resultMap.put("message","短信无法发送，请重新");
+                                }
+
                             }
 
                         }
@@ -252,7 +283,7 @@ public class UserController {
                         System.out.println("telephoneCode删除成功");
                         timer.cancel();
                     }
-                },3*60*1000);
+                },5*60*1000);
             }
 
         }else {
@@ -341,11 +372,14 @@ public class UserController {
                 othersUser.setCreateIp("");
                 othersUser.setCreateTime(new Date(0));
                 othersUser.setLoginIp("");
+                othersUser.setLoginTime(new Date(0));
+                othersUser.setLastIp("");
+                othersUser.setLastTime(new Date(0));
                 othersUser.setMissNumber(0);
                 othersUser.setMissTime(new Date(0));
                 othersUser.setPassword("");
                 othersUser.setStatus("");
-                othersUser.setLoginTime(new Date(0));
+
             }
             resultMap.put("user",othersUser);
             if (user == null) {
@@ -482,6 +516,26 @@ public class UserController {
             }
             resultMap.put("userList",mapList);
 
+        }
+        return JSONObject.toJSONString(resultMap);
+    }
+    /*查询用户关注的所有人信息*/
+    @RequestMapping(value = "ownInformation")
+    @ResponseBody
+    public Object ownInformation(){
+        Map<String,Object> resultMap = new HashMap<String, Object>();
+        Subject currentUser = SecurityUtils.getSubject();
+        User user = (User) currentUser.getPrincipal();
+        if (user == null) {
+            resultMap.put("user", null);
+        } else {
+            user.setSalt("");
+            user.setLoginIp("");
+            user.setMissNumber(0);
+            user.setMissTime(new Date(0));
+            user.setPassword("");
+            user.setStatus("");
+            resultMap.put("user",user);
         }
         return JSONObject.toJSONString(resultMap);
     }

@@ -12,6 +12,35 @@
     <link rel="stylesheet" href="/static/css/header.css"/>
     <link rel="stylesheet" href="/static/css/user.css"/>
 </head>
+<style type="text/css">
+    .div-table{
+        margin:0 12px;
+        width:90%;
+        heigth:500px;
+        font-size:13px ;
+    }
+    .div-table table{
+        margin:30px;
+        border-color:#DFDFDF;
+        line-height:40px;
+    }
+    .div-table table td{
+        padding-left:10px;
+        padding-right:10px;
+    }
+    .div-table table th{
+        padding-left:10px;
+        background-color:#F5FBFF;
+    }
+    .div-table table a{
+        cursor: pointer;
+        text-decoration:none;
+        color:#4F5EAF;
+    }
+
+    .div-table table tr td a:hover {color:#F00;} /* 鼠标移动到链接上 */
+
+</style>
 <body>
 <div class="header">
     <%@include file="common/header.jsp"%>
@@ -158,30 +187,58 @@
             })
         }
         /*点击导航栏样式改变*/
-        $('.nav .nav_item').each(function () {
-            $(this).click(function () {
-                $('.nav_item').removeClass('action');
-                $(this).addClass('action');
-                let url=$(this).children('a').data("url");
-                console.log(url);
-                if(url=="/article/findArticleUserAll"){
-                    $.ajax({
-                        type: "GET",
-                        url: url,
-                        data:{uid:keyword.split("=")[1],page: 1, limit:20},
-                        success: function(data){
-                            console.log(data);
+        $(".nav").on("click",".nav_item",function () {
+            $('.nav_item').removeClass('action');
+            $(this).addClass('action');
+            let url=$(this).children('a').data("url");
+            console.log(url);
+            if(url=="/article/findArticleUserAll"){
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    data:{uid:keyword.split("=")[1],page: 1, limit:20},
+                    success: function(data){
+//                        console.log(data);
                         showArticle(data);
                         pages(data.count);
-                        }
-                    });
-                }else {
-                    $.get(url+"?"+keyword,function (data) {
-                        console.log(data);
-                        showAttentionUserInfo(data);
-                    })
-                }
-            });
+                    }
+                });
+            }else if (url=="/ownInformation"){
+                $.get(url,function (data) {
+                    console.log(data);
+                    ownInformation(data);
+                });
+            }else {
+                $.get(url+"?"+keyword,function (data) {
+//                    console.log(data);
+                    showAttentionUserInfo(data);
+                })
+            }
+        })
+
+        function ownInformation(data) {
+            let ul=$('.bbs_post_list');
+            ul.empty();
+//            let childDiv='<div class="ownInfo">' +
+//                '<p><img src="'+data.user.avatar+'"/></p>' +
+//                '<p>用户名：'+data.user.username+'</p>'+
+//                '<p>手机号：'+data.user.telephone+'</p>'+
+//                '<p>注册时间：'+dateFormat(new Date(data.user.createTime))+'</p>'+
+//                '<p>上次登录IP：'+data.user.lastIp+'</p>'+
+//                '<p>上次登录时间'+data.user.lastTime+'</p>'
+//                '</div>';
+            let lis='<li class="info_item"><div class="column_title">头像：</div><img src="'+data.user.avatar+'"/><button class="layui-btn layui-btn-normal" id="modify_avatar">更换头像</button></li>' +
+                '<li class="info_item"><div class="column_title">用户名：</div><input value="'+data.user.username+'"/><button class="layui-btn layui-btn-normal" >修改</button></li>' +
+                '<li class="info_item"><div class="column_title">Email：</div><input value="'+(data.user.email==null?'':data.user.email)+'"/><button class="layui-btn layui-btn-normal" >修改</button></li>' +
+                '<li class="info_item"><div class="column_title">QQ：</div><input value="'+(data.user.qq==null?'':data.user.qq)+'"/><button class="layui-btn layui-btn-normal" >修改</button></li>' +
+                '<li class="info_item"><div class="column_title">手机号：</div><div>'+data.user.telephone+'</div></li>'+
+                '<li class="info_item"><div class="column_title">注册时间：</div><div>'+dateFormat(new Date(data.user.createTime))+'</div></li>'+
+                '<li class="info_item"><div class="column_title">上次登录IP：</div><div>'+data.user.lastIp+'</div></li>'+
+                '<li class="info_item"><div class="column_title">上次登录时间：</div><div>'+dateFormat(new Date(data.user.lastTime))+'</div></li>'
+            ul.append(lis);
+        }
+        $(".bbs_post_list").on("click","#modify_avatar",function () {
+            console.log("确定修改吗");
         });
         function userInfo(data) {
             if(data.user!=null){
@@ -191,7 +248,7 @@
                         button='<button type="button" class="layui-btn layui-btn-danger" id="unsubscribe"><i class="fa fa-heart-o" aria-hidden="true"></i>&nbsp;<span>取消关注</span></button>';
                     }else if(data.attention=="55"){
                         button="";
-                        $('.nav>ul').append('<li class="nav_item"><a href="javascript:;" data-url="/article/findArticleUserAll">个人中心</a></li>');
+                        $('.nav>ul').append('<li class="nav_item"><a href="javascript:;" data-url="/ownInformation">个人中心</a></li>');
                     }
                 }
                 let dom='<input type="hidden" id="others_id" name="othersId" value="'+data.user.id+'"/><a href="/user?uid='+data.user.id+'"><img src="'+data.user.avatar+'"></a><h6>'+data.user.username+'</h6><p>'+(data.user.signature==null||data.user.signature==""?"该友很赖，什么都没有":data.user.signature)+'</p> ' +
@@ -200,14 +257,12 @@
                     '<li><span>评论</span><span>'+data.userArticleComments+'</span></li> <li><span>访问</span><span>'+data.userArticleViews+'</span></li> </ul>';
                 $('.personal_information').empty().append(button+dom);
             }
-
         }
         function showArticle(data) {
             let ul=$('.bbs_post_list');
             ul.empty();
             if(data.article.length>0) {
                 for (let i of data.article) {
-//                console.log(i);
                     let li = $('<li class="bbs_post_item"><a href="/user?uid=' + i.user.id + '" uid="' + i.user.id + '"><img src="' + i.user.avatar + '"></a>' +
                         '<div class="post"><p class="post_summary"><a href="/article/details?aid=' + i.aid + '" aid="' + i.aid + '">' + i.atitle + '</a></p>' +
                         '<div class="post_note"><span>发于&nbsp;' + dateFormat(new Date(i.atime)) + '</span>&nbsp;&nbsp;&nbsp;&nbsp;<span>赞&nbsp;' + i.alikeCount + '</span>&nbsp;&nbsp;&nbsp;&nbsp;<span>评论&nbsp;' + i.acommentCount + '</span>&nbsp;&nbsp;&nbsp;&nbsp;<span>阅读&nbsp;' + i.aviews + '</span></div></div></li>')

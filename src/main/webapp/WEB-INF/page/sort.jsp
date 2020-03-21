@@ -23,12 +23,12 @@
                 <div class="nav">
                     <h3>模块分类</h3>
                     <ul>
-                        <li class="nav_item"><a href="#">NBA</a></li>
-                        <li class="nav_item"><a href="#">CBA</a></li>
-                        <li class="nav_item"><a href="#">学院派</a></li>
-                        <li class="nav_item"><a href="#">街头派</a></li>
-                        <li class="nav_item"><a href="#">视频</a></li>
-                        <li class="nav_item"><a href="#">致胜宝</a></li>
+                        <li class="nav_item"><a href="/article/sort?type=NBA">NBA</a></li>
+                        <li class="nav_item"><a href="/article/sort?type=CBA">CBA</a></li>
+                        <li class="nav_item"><a href="/article/sort?type=学院派">学院派</a></li>
+                        <li class="nav_item"><a href="/article/sort?type=街头派">街头派</a></li>
+                        <li class="nav_item"><a href="/video">视频</a></li>
+                        <li class="nav_item"><a href="/article/sort?type=致胜宝">致胜宝</a></li>
                     </ul>
                 </div>
             </div>

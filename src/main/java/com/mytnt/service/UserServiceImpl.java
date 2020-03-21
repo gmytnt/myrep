@@ -47,6 +47,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public int updateLoginUser(User user) {
+        return userMapper.updateLoginUser(user);
+    }
+
+    @Override
     public RegisterLog findtelePhoneCount(String telephone) {
         return userMapper.findtelePhoneCount(telephone);
     }

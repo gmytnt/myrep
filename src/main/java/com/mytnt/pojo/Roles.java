@@ -6,30 +6,22 @@ import java.io.Serializable;
  * Created by meiyan on 2020/3/7.
  */
 public class Roles implements Serializable {
-    private Integer roleId;
-    private String roleName;
+    private Integer rolesId;
+    private String rolesName;
 
-    @Override
-    public String toString() {
-        return "Roles{" +
-                "roleId=" + roleId +
-                ", roleName='" + roleName + '\'' +
-                '}';
+    public Integer getRolesId() {
+        return rolesId;
     }
 
-    public Integer getRoleId() {
-        return roleId;
+    public void setRolesId(Integer rolesId) {
+        this.rolesId = rolesId;
     }
 
-    public void setRoleId(Integer roleId) {
-        this.roleId = roleId;
+    public String getRolesName() {
+        return rolesName;
     }
 
-    public String getRoleName() {
-        return roleName;
-    }
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
+    public void setRolesName(String rolesName) {
+        this.rolesName = rolesName;
     }
 }

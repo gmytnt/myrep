@@ -48,7 +48,7 @@
                 <input type="text" placeholder="手机验证码" class="phone_code">
                 <button type="button" class="layui-btn layui-btn-normal get_verification">获取验证码</button>
             </div>
-            <button class="login_btn" type="button">登录</button>
+            <button class="login_btn" type="button">注册</button>
         </form>
 
 

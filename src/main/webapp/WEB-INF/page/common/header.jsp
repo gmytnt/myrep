@@ -17,7 +17,7 @@
             <li class="menu_item"><a href="/article/sort?type=CBA">CBA</a></li>
             <li class="menu_item"><a href="/article/sort?type=学院派">学院派</a></li>
             <li class="menu_item"><a href="/article/sort?type=街头派">街头派</a></li>
-            <li class="menu_item"><a href="/article/sort?type=视频">视频</a></li>
+            <li class="menu_item"><a href="/video">视频</a></li>
             <li class="menu_item"><a href="/article/sort?type=致胜宝">致胜宝</a></li>
             <%-- <li class="menu_item"><a href="/mall">商城</a></li>--%>
             <%--<li class="menu_item"><a href="#">联系</a></li>--%>
@@ -45,6 +45,7 @@
 </div>
 <script>
     for (let i of document.querySelectorAll(".menu li a")){
+        console.log(window.location.pathname+decodeURIComponent(window.location.search));
         if (i.getAttribute("href")==window.location.pathname+decodeURIComponent(window.location.search)){
 //            console.log(i.parentElement.parentElement.children)
             for (let j of i.parentElement.parentElement.children){

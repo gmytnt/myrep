@@ -87,7 +87,7 @@
 		<property name="realms">
 			<list>
 				<ref bean="jdbcRealm"/>
-				<ref bean="shiroRealmTwo"/>
+				<!--<ref bean="shiroRealmTwo"/>-->
 			</list>
 		</property>
 	</bean>
@@ -123,14 +123,14 @@
 			</bean>
 		</property>
 	</bean>
-	<bean id="shiroRealmTwo" class="com.mytnt.realms.ShiroRealmTwo">
-		<property name="credentialsMatcher">
-			<bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
-				<property name="hashAlgorithmName" value="MD5"></property>
-				<property name="hashIterations" value="1024"></property>
-			</bean>
-		</property>
-	</bean>
+	<!--<bean id="shiroRealmTwo" class="com.mytnt.realms.ShiroRealmTwo">-->
+		<!--<property name="credentialsMatcher">-->
+			<!--<bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">-->
+				<!--<property name="hashAlgorithmName" value="MD5"></property>-->
+				<!--<property name="hashIterations" value="1024"></property>-->
+			<!--</bean>-->
+		<!--</property>-->
+	<!--</bean>-->
 
 	<!--
     4. 配置 LifecycleBeanPostProcessor. 可以自定的来调用配置在 Spring IOC 容器中 shiro bean 的生命周期方法.
@@ -177,6 +177,7 @@
 				/logout = logout
 				# everything else requires authentication:
 				/article/compiler= authc
+				/ownInformation= authc
 				/admin/**=roles[superAdmin]
 			</value>
 		</property>

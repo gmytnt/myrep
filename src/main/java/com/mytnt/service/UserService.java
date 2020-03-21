@@ -17,6 +17,8 @@ public interface UserService {
     public User findUserId(Integer userId);
     /*添加用户*/
     public int addUser(User user);
+    /*登录时修改用户*/
+    public int updateLoginUser(User user);
     /*查询手机号是否发送给验证码*/
     public RegisterLog findtelePhoneCount(String telephone);
     /*查询当前ip发送几个手机号验证码*/

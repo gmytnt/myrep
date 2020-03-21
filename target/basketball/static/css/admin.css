@@ -1,0 +1,211 @@
+
+/*主体样式*/
+.main{
+    /*min-height: 600px;*/
+    margin: 30px auto 0px;
+}
+.main .content h3{
+    height: 40px;
+    background:#f7e8e891;
+    font-size: 20px;
+    color: #ff4007;
+    line-height: 40px;
+    padding-left: 2%;
+}
+/*左侧部分*/
+.main .left{
+    padding-right: 10px;
+    box-shadow: 0 0 5px #fa4;
+}
+.main .left .content{
+    background: #ffc9a28a;
+}
+
+.main .left .content .nav{
+    margin: 0px 2px;
+    padding: 12px 2px 50px;
+    box-sizing: border-box;
+}
+.main .left .content .nav h3{
+    border-bottom: 2px solid #fff9ec94;
+    border-top: 1px solid #fff9ec94;
+    box-shadow: 2px 2px 10px #762424;
+    padding: 5px 10%;
+}
+.main .left .content .nav ul{
+box-sizing: border-box;
+display: flex;
+flex-direction: column;
+flex-basis: 100%;
+}
+.main .left .content .nav .nav_item{
+list-style: none;
+background: #f7e8e855;
+height: 40px;
+line-height: 40px;
+text-align: center;
+border-bottom: 1px solid #fff9ec94;
+}
+
+.main .left .content .nav ul .nav_item a{
+text-align: left;
+display: block;
+padding-left: 20%;
+color: #68250a;
+font-size: 18px;
+}
+.main .left .content .nav .nav_item a:hover{
+    background: #f6efef85;
+}
+/*左侧部分*/
+/*中间部分*/
+.main .middle{
+    padding-right: 10px;
+}
+.main .middle .content{
+    background: #ffc9a28a;
+    min-height: 700px;
+}
+.main .middle .content .bbs_post{
+    padding: 12px 4px 40px;
+    display: flex;
+    flex-direction: column;
+}
+.main .middle .content .bbs_post .bbs_header{
+    display: flex;
+    justify-content: space-between;
+    background: #f7e8e891;
+    align-items: center;
+}
+.main .middle .content .bbs_post h3{
+    background: none;
+    flex: 1;
+}
+.main .middle .content .search{
+    flex: 2;
+    display: flex;
+    justify-content: center;
+    padding: 12px 4px 5px;
+    box-sizing: border-box;
+}
+.main .middle .content .search .search_input{
+    width: 75%;
+    padding-left: 5px;
+    border: none;
+}
+.main .middle .content .search .search_input:focus,
+.main .middle .content .search .search_select:focus{
+    border: 1px solid #00F7DE;
+}
+.main .middle .content .search select{
+    border: none;
+    box-sizing: border-box;
+    width: 20%;
+    margin-left: 2px;
+}
+.main .middle .content .search .search_btn{
+    width: 15%;
+}
+.main .middle .content .bbs_post .bbs_post_list{
+    display: flex;
+    flex-direction: column;
+    flex-basis: 100%;
+}
+.main .middle .content .bbs_post .bbs_post_list .bbs_post_item{
+    display: flex;
+    min-height: 90px;
+    align-items: center;
+    margin: 0px 20px;
+    padding: 5px;
+    border-bottom: 1px solid #956a4c7d;
+}
+.main .middle .content .bbs_post .bbs_post_list .bbs_post_item img{
+    height: 60px;
+    width: 60px;
+    border-radius: 20%;
+}
+.main .middle .content .bbs_post .bbs_post_list .bbs_post_item .post{
+    margin-left: 20px;
+    padding: 10px 5px;
+}
+.main .middle .content .bbs_post .bbs_post_list .bbs_post_item .post_summary{
+    margin-bottom: 6px;
+}
+.main .middle .content .bbs_post .bbs_post_list .bbs_post_item .post_note{
+
+}
+
+/*右侧内容*/
+.main .right .content{
+    background: #ffc9a28a;
+}
+.main .right .content .announcement{
+    padding: 12px 12px 20px;
+}
+.main .right .content .announcement h3 ,
+.main .right .content .advertisement h3{
+    box-shadow: 2px 2px 10px #762424;
+    padding-left: 5%;
+}
+.main .right .content .announcement .announcement_detail{
+    background: #fff7f73d;
+    padding: 10px 20px;
+    text-indent: 2em;
+    line-height: 24px;
+}
+.main .right .content .announcement .announcement_footer{
+    background: #fff7f73d;
+    line-height: 24px;
+    box-shadow: -2px -2px 10px #762424;
+}
+.main .right .content .announcement .announcement_footer a{
+    display: block;
+    text-align: center;
+    height: 40px;
+    line-height: 40px;
+    color: #740202;
+}
+.main .right .content .announcement .announcement_footer a:hover{
+    background: #f6efef85;
+}
+.main .right .content .advertisement{
+    padding: 30px 12px 20px;
+}
+.main .right .content .advertisement h3{
+    margin-bottom: 10px;
+}
+.main .right .content .advertisement .ad_carousel img{
+    height: 100%;
+    width: 100%;
+}
+.main .right .content .advertisement .ad_photo{
+    height: 800px;
+    margin-top: 20px;
+}
+.main .right .content .advertisement .ad_photo img{
+    height: 100%;
+    width: 100%;
+}
+.admin_show{
+    padding: 2%;
+}
+#edit{
+    padding: 20px 10px;
+    display: flex;
+    justify-content: space-around;
+}
+/*主体样式*/
+/*尾部样式*/
+.footer{
+    height: 60px;
+    margin: 25px auto 5px;
+    background: #ffffff38;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.footer .footer_body{
+    color: #74674bfa;
+}
+
+/*尾部样式*/
