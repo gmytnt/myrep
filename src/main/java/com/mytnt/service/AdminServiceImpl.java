@@ -20,8 +20,8 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public int adminUserCount() {
-        return adminMapper.adminUserCount();
+    public int adminUserCount(String username,String telephone) {
+        return adminMapper.adminUserCount(username, telephone);
     }
 
     @Override
@@ -32,5 +32,30 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public int adminUpdateUserRoles(Integer userId, Integer rolesId) {
         return adminMapper.adminUpdateUserRoles(userId, rolesId);
+    }
+
+    @Override
+    public List<Article> adminArticleList(String username, String title, String content,String astatus, Integer page, Integer limit) {
+        return adminMapper.adminArticleList(username, title, content,astatus, (page-1)*limit, limit);
+    }
+
+    @Override
+    public int adminArticleCount(String username, String title, String content, String astatus) {
+        return adminMapper.adminArticleCount(username, title, content,astatus);
+    }
+
+    @Override
+    public Article adminFindArticleBy(Integer aid) {
+        return adminMapper.adminFindArticleBy(aid);
+    }
+
+    @Override
+    public List<Comment> adminFindCommentArticle(Integer articleId) {
+        return adminMapper.adminFindCommentArticle(articleId);
+    }
+
+    @Override
+    public int adminUpdateArticleStatus(Integer aid, Integer astatus) {
+        return adminMapper.adminUpdateArticleStatus(aid, astatus);
     }
 }

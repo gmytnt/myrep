@@ -12,35 +12,6 @@
     <link rel="stylesheet" href="/static/css/header.css"/>
     <link rel="stylesheet" href="/static/css/user.css"/>
 </head>
-<style type="text/css">
-    .div-table{
-        margin:0 12px;
-        width:90%;
-        heigth:500px;
-        font-size:13px ;
-    }
-    .div-table table{
-        margin:30px;
-        border-color:#DFDFDF;
-        line-height:40px;
-    }
-    .div-table table td{
-        padding-left:10px;
-        padding-right:10px;
-    }
-    .div-table table th{
-        padding-left:10px;
-        background-color:#F5FBFF;
-    }
-    .div-table table a{
-        cursor: pointer;
-        text-decoration:none;
-        color:#4F5EAF;
-    }
-
-    .div-table table tr td a:hover {color:#F00;} /* 鼠标移动到链接上 */
-
-</style>
 <body>
 <div class="header">
     <%@include file="common/header.jsp"%>

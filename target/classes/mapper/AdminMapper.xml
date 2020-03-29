@@ -27,6 +27,42 @@
             <result column="roles_name" property="rolesName"/>
         </collection>
     </resultMap>
+    <resultMap id="articleUserAndSort" type="Article">
+        <id column="a_id" property="aid"/>
+        <result column="user_id" property="userId"/>
+        <result column="a_title" property="atitle"/>
+        <result column="a_content" property="acontent"/>
+        <result column="a_time" property="atime"/>
+        <result column="a_info" property="ainfo"/>
+        <result column="a_status" property="astatus"/>
+        <result column="a_views" property="aviews"/>
+        <result column="a_comment_count" property="acommentCount"/>
+        <result column="a_like_count" property="alikeCount"/>
+        <association property="user" javaType="User">
+            <id column="id" property="id"/>
+            <result column="username" property="username"/>
+            <result column="avatar" property="avatar"/>
+            <result column="signature" property="signature"/>
+        </association>
+        <collection property="articleSorts" ofType="ArticleSort">
+            <id column="sort_id" property="sortId"/>
+            <result column="sort_name" property="sortName"/>
+        </collection>
+    </resultMap>
+    <resultMap id="commentUser" type="Comment">
+        <id column="comment_id" property="commentId"/>
+        <result column="user_id" property="userId"/>
+        <result column="article_id" property="articleId"/>
+        <result column="comment_like_count" property="commentLikeCount"/>
+        <result column="comment_time" property="commentTime"/>
+        <result column="comment_content" property="commentContent"/>
+        <result column="parent_comment_id" property="parentCommentId"/>
+        <association property="user" javaType="User">
+            <id column="id" property="id"/>
+            <result column="username" property="username"/>
+            <result column="avatar" property="avatar"/>
+        </association>
+    </resultMap>
     <select id="adminFindUser" resultMap="userAndRole">
         SELECT u.*,r.* FROM t_user u LEFT OUTER JOIN t_user_roles ur ON u.`id`=ur.`user_id`
         LEFT OUTER JOIN	t_roles r ON ur.`role_id`=r.`roles_id`
@@ -41,7 +77,15 @@
         limit #{page},#{limit}
     </select>
     <select id="adminUserCount" resultType="int">
-        SELECT COUNT(*) FROM t_user
+        SELECT COUNT(*) FROM t_user u
+        <where>
+            <if test="username != null and username != ''">
+                and u.`username` like "%"#{username}"%"
+            </if>
+            <if test="telephone != null and telephone != ''">
+                and u.`telephone` like "%"#{telephone}"%"
+            </if>
+        </where>
     </select>
     <!--查询角色-->
     <select id="adminFindRoles" resultType="Roles">
@@ -50,5 +94,60 @@
     <!--修改用户角色-->
     <update id="adminUpdateUserRoles">
         UPDATE t_user_roles SET role_id=#{rolesId} WHERE user_id=#{userId}
+    </update>
+    <!--查询所有文章-->
+    <select id="adminArticleList"  resultMap="articleUserAndSort">
+        SELECT a.*,u.`id`,u.`username`,u.`avatar`,u.`signature` FROM t_article a
+        LEFT OUTER JOIN t_user u ON a.`user_id`=u.`id`
+        <where>
+            <if test="username != null and username != ''">
+                and u.`username` like "%"#{username}"%"
+            </if>
+            <if test="title != null and title != ''">
+                and a.`a_title` like "%"#{title}"%"
+            </if>
+            <if test="content != null and content != ''">
+                and a.`a_content` like "%"#{content}"%"
+            </if>
+            <if test="astatus != null and astatus != ''">
+                and a.`a_status`=#{astatus}
+            </if>
+        </where>
+
+        limit #{page},#{limit}
+    </select>
+    <select id="adminArticleCount" resultType="int">
+        SELECT COUNT(*) FROM t_article a
+        LEFT OUTER JOIN t_user u ON a.`user_id`=u.`id`
+        <where>
+            <if test="username != null and username != ''">
+                and u.`username` like "%"#{username}"%"
+            </if>
+            <if test="title != null and title != ''">
+                and a.`a_title` like "%"#{title}"%"
+            </if>
+            <if test="content != null and content != ''">
+                and a.`a_content` like "%"#{content}"%"
+            </if>
+            <if test="astatus != null and astatus != ''">
+                and a.`a_status`=#{astatus}
+            </if>
+        </where>
+    </select>
+    <!--由id查询文章-->
+    <select id="adminFindArticleBy"  resultMap="articleUserAndSort">
+        SELECT a.*,u.`id`,u.`username`,u.`avatar`,u.`signature`,ats.`sort_name` FROM t_article a
+        LEFT OUTER JOIN t_user u ON a.`user_id`=u.`id`
+        LEFT OUTER JOIN t_article_correspond_sort acs ON a.`a_id`=acs.`article_id`
+        LEFT OUTER JOIN t_article_sort ats ON ats.`sort_id`=acs.`article_sort_id`
+        WHERE a.`a_id`=#{aid}
+    </select>
+    <!--查询所有评论-->
+    <select id="adminFindCommentArticle"  resultMap="commentUser">
+        SELECT c.*,u.id,u.username,u.avatar FROM t_comments c LEFT OUTER JOIN t_user u ON c.`user_id`= u.id WHERE c.`article_id`=#{articleId}
+    </select>
+    <!--修改用户角色-->
+    <update id="adminUpdateArticleStatus">
+        UPDATE t_article SET `a_status`=#{astatus} WHERE `a_id`=#{aid}
     </update>
 </mapper>
