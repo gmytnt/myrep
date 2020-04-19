@@ -2,6 +2,7 @@ package com.mytnt.service;
 
 import com.mytnt.pojo.RegisterLog;
 import com.mytnt.pojo.User;
+import com.mytnt.pojo.UserLog;
 
 import java.util.List;
 
@@ -52,4 +53,7 @@ public interface UserService {
     /*查询用户的粉丝的所有人信息*/
     public List<User> findFollowersUserInfo(Integer userId);
 
+    int addUserLog(UserLog userLog);
+
+    int updateMissNumber(String telephone);
 }

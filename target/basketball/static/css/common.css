@@ -96,3 +96,8 @@ blockquote{
     height: 40px;
     line-height: 40px;
 }
+.bbs_post_list li>p{
+    color: #3326fce0;
+    font-size: 24px;
+    padding: 20px 20px 0px;
+}

@@ -41,7 +41,7 @@
                         <h3></h3>
                         <div class="search">
                             <input type="text" class="search_input" placeholder="输入关键词"/>
-                            <select name="search_select" class="search_select">
+                            <%--<select name="search_select" class="search_select">
                                 <option value="1">全部</option>
                                 <option value="2">NBA</option>
                                 <option value="3">CBA</option>
@@ -49,7 +49,7 @@
                                 <option value="5">街头派</option>
                                 <option value="6">视频</option>
                                 <option value="7">致胜宝</option>
-                            </select>
+                            </select>--%>
                             <button class="layui-btn search_btn"><i class="fa fa-search" aria-hidden="true"></i></button>
                         </div>
                     </div>

@@ -15,13 +15,13 @@ public interface ArticleMapper {
     /*查询sortId分类*/
     public ArticleSort findSortById(@Param("sortId")Integer sortId);
     /*查询全部文章*/
-    public List<Article> findArticleAll(@Param("userId")String userId,@Param("page") Integer page,@Param("limit") Integer limit);
+    public List<Article> findArticleAll(@Param("userId")String userId,@Param("page") Integer page,@Param("limit") Integer limit,@Param("searchName")String searchName);
     /*统计文章数量*/
-    public int  findArticleCount(@Param("userId")String userId);
+    public int  findArticleCount(@Param("userId")String userId,@Param("searchName")String searchName);
     /*统计分类文章数量*/
-    public List<Article> findArticleSort(@Param("sortName")String sortName,@Param("page") Integer page,@Param("limit") Integer limit);
+    public List<Article> findArticleSort(@Param("sortName")String sortName,@Param("page") Integer page,@Param("limit") Integer limit,@Param("searchName")String searchName);
     /*统计分类文章数量*/
-    public int  findArticleSortCount(@Param("sortName")String sortName);
+    public int  findArticleSortCount(@Param("sortName")String sortName,@Param("searchName")String searchName);
     /*查询sortId分类*/
     public Article findArticleBy(@Param("aid")Integer aid,@Param("sortName")String sortName);
 

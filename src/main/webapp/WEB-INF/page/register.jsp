@@ -60,9 +60,35 @@
         var layer = layui.layer
             , form = layui.form
             , $ = layui.jquery;
+        $("input[name=telephone]").blur(function () {
+            let telephone=$(this).val()
+            if (telephone == '' || !/^1[3|4|5|6|7|8|9][0-9]{9}$/.test(telephone)) {
+                layer.msg("输入正确手机号", {icon: 2});
+            }else {
+                $.get('/findUserTelephone', {"telephone": telephone}, function (data) {
+                    if(data.code==2){
+                        $("[name=telephone]").val("");
+                        layer.msg(data.message, {icon: 2});
+                    }
+                })
+            }
+        });
+        $("input[name=username]").blur(function () {
+            let username=$(this).val().trim();
+            if (username == '') {
+                layer.msg("用户不能为空", {icon: 2});
+            }else {
+                $.get('/findUserName', {"username": username}, function (data) {
+                    if (data.code ==2) {
+                        $("input[name=username]").val("");
+                        layer.msg(data.message, {icon: 2});
+                    }
+                })
+            }
+        });
         $('.get_verification').click(function () {
-            let code = $("#code").val();
-            let telephone = $("[name=telephone]").val();
+            let code = $("#code").val().trim();
+            let telephone = $("[name=telephone]").val().trim();
             console.log(code);
             console.log(telephone);
             if (code == '') {
@@ -76,33 +102,33 @@
             $.post('/verification', {"code": code, "telephone": telephone}, function (data) {
                 layer.msg(data.message, {icon: 6});
             })
-        })
+        });
         $('.login_btn').click(function () {
             let code = $(".phone_code").val();
-            let telephone = $("[name=telephone]").val();
-            let username = $("[name=username]").val();
-            let pwd = $("[name=password]").val();
-            let repwd = $("[name=repassword]").val();
+            let telephone = $("[name=telephone]").val().trim();
+            let username = $("[name=username]").val().trim();
+            let pwd = $("[name=password]").val().trim();
+            let repwd = $("[name=repassword]").val().trim();
             console.log(code);
             console.log(telephone);
             if (code == '') {
-                layer.msg("验证码为空", {icon: 6});
+                layer.msg("验证码为空", {icon: 2});
                 return;
             };
             if (username == '') {
-                layer.msg("用户不能为空", {icon: 6});
+                layer.msg("用户不能为空", {icon: 2});
                 return;
             };
             if (pwd == '' || repwd == '') {
-                layer.msg("密码不能为空", {icon: 6});
+                layer.msg("密码不能为空", {icon: 2});
                 return;
             } else if (pwd != repwd) {
-                layer.msg("密码不一致", {icon: 6});
+                layer.msg("密码不一致", {icon: 2});
                 return;
             };
 
             if (telephone == '' || !/^1[3|4|5|6|7|8|9][0-9]{9}$/.test(telephone)) {
-                layer.msg("输入手机号码", {icon: 6});
+                layer.msg("输入手机号码", {icon: 2});
                 return;
             };
             $.post('/doregister', {

@@ -2,6 +2,7 @@ package com.mytnt.dao;
 
 import com.mytnt.pojo.RegisterLog;
 import com.mytnt.pojo.User;
+import com.mytnt.pojo.UserLog;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -56,4 +57,8 @@ public interface UserMapper {
     public List<User> findAttentionUserInfo(@Param("userId") Integer userId);
     /*查询用户的粉丝的所有人信息*/
     public List<User> findFollowersUserInfo(@Param("userId") Integer userId);
+
+    int addUserLog(UserLog userLog);
+
+    int updateMissNumber(@Param("missNumber") Integer missNumber,@Param("telephone")String telephone);
 }

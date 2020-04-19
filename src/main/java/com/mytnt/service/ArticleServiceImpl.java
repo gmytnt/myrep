@@ -21,8 +21,8 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<Article> findArticleAll(String userId,Integer page,Integer limit) {
-        return articleMapper.findArticleAll(userId,(page-1)*limit,limit);
+    public List<Article> findArticleAll(String userId,Integer page,Integer limit,String searchName) {
+        return articleMapper.findArticleAll(userId,(page-1)*limit,limit,searchName);
     }
 
     @Override
@@ -67,18 +67,18 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public int findArticleCount(String userId) {
-        return articleMapper.findArticleCount(userId);
+    public int findArticleCount(String userId,String searchName) {
+        return articleMapper.findArticleCount(userId,searchName);
     }
 
     @Override
-    public List<Article> findArticleSort(String sortName, Integer page, Integer limit) {
-        return articleMapper.findArticleSort(sortName, (page-1)*limit,limit);
+    public List<Article> findArticleSort(String sortName, Integer page, Integer limit,String searchName) {
+        return articleMapper.findArticleSort(sortName, (page-1)*limit,limit,searchName);
     }
 
     @Override
-    public int findArticleSortCount(String sortName) {
-        return articleMapper.findArticleSortCount(sortName);
+    public int findArticleSortCount(String sortName,String searchName) {
+        return articleMapper.findArticleSortCount(sortName,searchName);
     }
 
     @Override

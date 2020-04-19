@@ -101,7 +101,7 @@
     </insert>
     <!--修改登录时修改信息-->
     <update id="updateLoginUser" parameterType="User">
-        update t_user set last_ip=#{lastIp},last_time=#{lastTime},login_ip=#{loginIp},login_time=#{loginTime} where id=#{id}
+        update t_user set last_ip=#{lastIp},last_time=#{lastTime},login_ip=#{loginIp},login_time=#{loginTime},miss_number=#{missNumber} where id=#{id}
     </update>
     <!--修改注册日志-->
     <update id="updateRegisterLog" parameterType="RegisterLog">
@@ -161,7 +161,14 @@
         SELECT u.`id`,u.`username`,u.`avatar`,u.`signature` FROM t_attention a LEFT OUTER JOIN t_user u ON a.`followers_uid`=u.`id`
         WHERE attention_status=1 AND a.`attention_uid`=#{userId}
     </select>
-
+    <!--添加登录用户信息-->
+    <insert id="addUserLog" parameterType="UserLog">
+        INSERT INTO t_user_log (login_ip,uid,login_time) values (#{loginIp},#{uid},now());
+    </insert>
+    <!--修改用户的登录错误信息-->
+    <update id="updateMissNumber">
+        UPDATE t_user set miss_number=#{missNumber},miss_time=now() WHERE telephone=#{telephone}
+    </update>
 </mapper>
 
 

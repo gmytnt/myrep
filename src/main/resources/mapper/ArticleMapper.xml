@@ -74,6 +74,9 @@
         <if test="userId != null and userId != ''">
             and a.`user_id`=#{userId}
         </if>
+        <if test="searchName != null and searchName != ''">
+            and a.`a_title`like "%"#{searchName}"%" or a.`a_content`like "%"#{searchName}"%"
+        </if>
         limit #{page},#{limit}
     </select>
     <!--统计文章数量-->
@@ -84,6 +87,9 @@
         <if test="userId != null and userId != ''">
             and a.`user_id`=#{userId}
         </if>
+        <if test="searchName != null and searchName != ''">
+            and a.`a_title`like "%"#{searchName}"%" or a.`a_content`like "%"#{searchName}"%"
+        </if>
     </select>
     <!--查询分类所有文章-->
     <select id="findArticleSort"  resultMap="articleUserAndSort">
@@ -92,9 +98,9 @@
         LEFT OUTER JOIN t_article a ON a.`a_id`=acs.`article_id`
         LEFT OUTER JOIN t_user u ON a.`user_id`=u.`id`
         WHERE ats.`sort_name`=#{sortName} AND a.`a_status`=2
-        <!--<if test="userId != null and userId != ''">-->
-        <!--and a.`user_id`=#{userId}-->
-        <!--</if>-->
+        <if test="searchName != null and searchName != ''">
+            and a.`a_title`like "%"#{searchName}"%" or a.`a_content`like "%"#{searchName}"%"
+        </if>
         limit #{page},#{limit}
     </select>
     <!--统计分类文章数量-->
@@ -104,9 +110,9 @@
         LEFT OUTER JOIN t_article a ON a.`a_id`=acs.`article_id`
         LEFT OUTER JOIN t_user u ON a.`user_id`=u.`id`
         WHERE ats.`sort_name`=#{sortName} AND a.`a_status`=2
-        <!--<if test="userId != null and userId != ''">-->
-        <!--and a.`user_id`=#{userId}-->
-        <!--</if>-->
+        <if test="searchName != null and searchName != ''">
+            and a.`a_title`like "%"#{searchName}"%" or a.`a_content`like "%"#{searchName}"%"
+        </if>
     </select>
     <!--由id查询文章-->
     <select id="findArticleBy"  resultMap="articleUserAndSort">

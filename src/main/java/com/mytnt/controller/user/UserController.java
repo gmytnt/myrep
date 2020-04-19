@@ -4,11 +4,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.code.kaptcha.Constants;
 import com.mytnt.pojo.RegisterLog;
 import com.mytnt.pojo.User;
+import com.mytnt.pojo.UserLog;
 import com.mytnt.service.UserService;
 import com.mytnt.tool.SendSms;
 import com.mytnt.tool.Tools;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +56,35 @@ public class UserController {
         return "user";
     }
 
+    @RequestMapping("findUserTelephone")
+    @ResponseBody
+    public Object findUserTelephone(@RequestParam("telephone")String telephone){
+        Map<String, Object> resultMap = new HashMap<>();
+        User user=userService.findtelePhone(telephone);
+        if (user==null){
+            resultMap.put("code","1");
+            resultMap.put("message","当前手机号可以注册");
+        }else {
+            resultMap.put("code","2");
+            resultMap.put("message","该手机号已经被注册了，换其他的手机号吧");
+        }
+        return JSONObject.toJSONString(resultMap);
+    }
+    @RequestMapping("findUserName")
+    @ResponseBody
+    public Object findUserName(@RequestParam("username")String username){
+        Map<String, Object> resultMap = new HashMap<>();
+        User user=userService.findUserName(username);
+        if (user==null){
+            resultMap.put("code","1");
+            resultMap.put("message","用户名可以使用");
+        }else {
+            resultMap.put("code","2");
+            resultMap.put("message","用户名已经被使用，起个更创意的名字吧");
+        }
+        return JSONObject.toJSONString(resultMap);
+    }
+
     /*登录*/
     @RequestMapping(value = "dologin",method = RequestMethod.POST)
     @ResponseBody
@@ -67,22 +99,36 @@ public class UserController {
             try {
                 // 执行登录.
                 currentUser.login(token);
+                //修改用户记录
                 User user = (User) currentUser.getPrincipal();
-                System.out.println(user);
                 user.setLastIp(user.getLoginIp());
                 user.setLastTime(user.getLoginTime());
                 user.setLoginIp(Tools.getIpAddr(request));
                 user.setLoginTime(new Date());
+                user.setMissNumber(0);
                 System.out.println(user);
                 userService.updateLoginUser(user);
+                //添加日志
+                UserLog userLog=new UserLog();
+                userLog.setLoginIp(Tools.getIpAddr(request));
+                userLog.setUid(user.getId());
+                userService.addUserLog(userLog);
                 resultMap.put("code","1");
                 resultMap.put("message","成功登录");
+            }catch (LockedAccountException e){
+                e.printStackTrace();
+                resultMap.put("code","2");
+                resultMap.put("message","用户被锁定了,暂时无法登录");
+            }catch (UnknownAccountException e){
+                e.printStackTrace();
+                resultMap.put("code","2");
+                resultMap.put("message","用户不存在或者密码错误");
             }
             // ... catch more exceptions here (maybe custom ones specific to your application?
             // 所有认证时异常的父类.
-            catch (AuthenticationException ae) {
-                //unexpected condition?  error?
-                System.out.println("登录失败: " + ae.getMessage());
+            catch (AuthenticationException e) {
+                e.printStackTrace();
+                userService.updateMissNumber(telephone);
                 resultMap.put("code","2");
                 resultMap.put("message","用户不存在或者密码错误");
             }
@@ -195,8 +241,8 @@ public class UserController {
                         registerLog.setFrequency(1);
                         registerLog.setIpAddress(ip);
                         registerLog.setTelephone(telephone);
-                        String status=SendSms.sendSms(telephone,String.valueOf(codeNum),"5");
-                        System.out.println(status+"返回值");
+//                        String status=SendSms.sendSms(telephone,String.valueOf(codeNum),"5");
+//                        System.out.println(status+"返回值");
                         if ("ok".equalsIgnoreCase("ok")){
                             userService.addRegisterLog(registerLog);
                             System.out.println(registerLog);
@@ -205,8 +251,8 @@ public class UserController {
                             session.removeAttribute(Constants.KAPTCHA_SESSION_KEY);
                             resultMap.put("message","短信以发送，注意查收手机验证码");
                         }else {
-                        resultMap.put("code","2");
-                        resultMap.put("message","短信无法发送，请重新");
+                            resultMap.put("code","2");
+                            resultMap.put("message","短信无法发送，请重新");
                         }
                     }else {
                         resultMap.put("code","2");

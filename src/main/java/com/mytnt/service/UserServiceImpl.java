@@ -2,6 +2,7 @@ package com.mytnt.service;
 import com.mytnt.dao.UserMapper;
 import com.mytnt.pojo.RegisterLog;
 import com.mytnt.pojo.User;
+import com.mytnt.pojo.UserLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -134,5 +135,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findFollowersUserInfo(Integer userId) {
         return userMapper.findFollowersUserInfo(userId);
+    }
+
+    @Override
+    public int addUserLog(UserLog userLog) {
+        return userMapper.addUserLog(userLog);
+    }
+
+    @Override
+    public int updateMissNumber(String telephone) {
+        Integer missNumber=userMapper.findtelePhone(telephone).getMissNumber();
+        return userMapper.updateMissNumber(++missNumber,telephone);
     }
 }

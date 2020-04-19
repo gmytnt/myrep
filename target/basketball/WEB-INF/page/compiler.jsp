@@ -129,7 +129,7 @@
                     setTimeout('window.location.href="/login"',500);
                 }else if(data.code=="1"){
                     layer.msg(data.message,{icon:6});
-                    setTimeout('window.location.reload()',500);
+                    setTimeout('window.location.href="/"',500);
                 }else {
                     layer.msg(data.message,{icon:5});
                 }

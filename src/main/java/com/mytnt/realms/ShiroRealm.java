@@ -12,6 +12,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,6 +35,8 @@ public class ShiroRealm extends AuthorizingRealm {
         for(Roles role:rolesList){
             if("超级管理员".equals(role.getRolesName())){
                 roles.add("superAdmin");
+            }else if("管理员".equals(role.getRolesName())){
+                roles.add("admin");
             }
         }
 
@@ -57,7 +60,7 @@ public class ShiroRealm extends AuthorizingRealm {
         if(user==null){
             throw new UnknownAccountException("用户不存在或者密码不正确!");
         }
-        if("2".equals(user.getStatus())){
+        if("5".equals(user.getMissNumber())&&new Date().getTime()-user.getMissTime().getTime()<1000*1*60*60*5){
             throw new LockedAccountException("用户暂时无法登录");
         }
         //6. 根据用户的情况, 来构建 AuthenticationInfo 对象并返回. 通常使用的实现类为: SimpleAuthenticationInfo

@@ -13,17 +13,17 @@ public interface ArticleService {
     /*查询所有分类*/
     public List<ArticleSort> findSortAll();
     /*查询全部文章*/
-    public List<Article> findArticleAll(String userId,Integer page,Integer limit);
+    public List<Article> findArticleAll(String userId,Integer page,Integer limit,String searchName);
     /*查询sortId分类*/
     public Article findArticleBy(Integer aid,String sortName,String sessionId);
     /*添加文章*/
     public int addArticle(Article article,String sort);
     /*统计文章数量*/
-    public int  findArticleCount(String userId);
+    public int  findArticleCount(String userId,String searchName);
     /*统计分类文章数量*/
-    public List<Article> findArticleSort(String sortName,Integer page,Integer limit);
+    public List<Article> findArticleSort(String sortName,Integer page,Integer limit,String searchName);
     /*统计分类文章数量*/
-    public int  findArticleSortCount(String sortName);
+    public int  findArticleSortCount(String sortName,String searchName);
     /*由文章和用户id判断是否点赞*/
     public int findUserIfLike(Integer articleId,Integer userId);
     /*判断文章id是否能被查看*/

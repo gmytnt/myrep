@@ -84,10 +84,11 @@ public class ArticleController {
     @RequestMapping("findArticleAll")
     @ResponseBody
     public Object findArticleAll(@RequestParam(value = "page",required = false)Integer page,
-                                 @RequestParam(value = "limit",required = false)Integer limit){
+                                 @RequestParam(value = "limit",required = false)Integer limit,
+                                 @RequestParam(value = "searchName",required = false)String searchName){
         Map<String, Object> resultMap = new HashMap<>();
-        List<Article> article = articleService.findArticleAll(null,page,limit);
-        int count=articleService.findArticleCount(null);
+        List<Article> article = articleService.findArticleAll(null,page,limit,searchName);
+        int count=articleService.findArticleCount(null,searchName);
         resultMap.put("article",article);
         resultMap.put("count",count);
         return JSONObject.toJSONString(resultMap);
@@ -96,12 +97,13 @@ public class ArticleController {
     @RequestMapping("findArticleSort")
     @ResponseBody
     public Object findArticleSort(@RequestParam("type")String type,@RequestParam(value = "page",required = false)Integer page,
-                                  @RequestParam(value = "limit",required = false)Integer limit){
+                                  @RequestParam(value = "limit",required = false)Integer limit,
+                                  @RequestParam(value = "searchName",required = false)String searchName){
         Map<String, Object> resultMap = new HashMap<>();
         System.out.println(type);
-        List<Article> article = articleService.findArticleSort(type,page,limit);
+        List<Article> article = articleService.findArticleSort(type,page,limit,searchName);
 
-        int count=articleService.findArticleSortCount(type);
+        int count=articleService.findArticleSortCount(type,searchName);
         resultMap.put("article",article);
         resultMap.put("count",count);
         return JSONObject.toJSONString(resultMap);
@@ -115,9 +117,9 @@ public class ArticleController {
         Map<String, Object> resultMap = new HashMap<>();
         if(userId!=null&&userId!=""){
             System.out.print(limit+"显示条数");
-            List<Article> article = articleService.findArticleAll(userId,page,limit);
+            List<Article> article = articleService.findArticleAll(userId,page,limit,null);
             resultMap.put("article",article);
-            int count=articleService.findArticleCount(userId);
+            int count=articleService.findArticleCount(userId,null);
             resultMap.put("count",count);
         }
         return JSONObject.toJSONString(resultMap);
