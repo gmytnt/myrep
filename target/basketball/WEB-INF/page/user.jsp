@@ -190,14 +190,6 @@
         function ownInformation(data) {
             let ul=$('.bbs_post_list');
             ul.empty();
-//            let childDiv='<div class="ownInfo">' +
-//                '<p><img src="'+data.user.avatar+'"/></p>' +
-//                '<p>用户名：'+data.user.username+'</p>'+
-//                '<p>手机号：'+data.user.telephone+'</p>'+
-//                '<p>注册时间：'+dateFormat(new Date(data.user.createTime))+'</p>'+
-//                '<p>上次登录IP：'+data.user.lastIp+'</p>'+
-//                '<p>上次登录时间'+data.user.lastTime+'</p>'
-//                '</div>';
             let lis='<li class="info_item"><div class="column_title">头像：</div><img src="'+data.user.avatar+'"/><button class="layui-btn layui-btn-normal" id="modify_avatar">更换头像</button></li>' +
                 '<li class="info_item"><div class="column_title">用户名：</div><input value="'+data.user.username+'"/><button class="layui-btn layui-btn-normal" >修改</button></li>' +
                 '<li class="info_item"><div class="column_title">Email：</div><input value="'+(data.user.email==null?'':data.user.email)+'"/><button class="layui-btn layui-btn-normal" >修改</button></li>' +

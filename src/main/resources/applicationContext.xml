@@ -177,6 +177,7 @@
 				/logout = logout
 				# everything else requires authentication:
 				/article/compiler= authc
+				/uploadFile=authc
 				/ownInformation= authc
 				/admin/**=roles[superAdmin]
 			</value>

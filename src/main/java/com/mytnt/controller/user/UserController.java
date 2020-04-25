@@ -517,7 +517,7 @@ public class UserController {
         }
         return JSONObject.toJSONString(resultMap);
     }
-    /*查询用户关注的所有人信息*/
+    /*查询用户的所有粉丝信息*/
     @RequestMapping(value = "followersUserInfo")
     @ResponseBody
     public Object followersUserInfo(@RequestParam(value = "uid",required=true)Integer uid){
@@ -565,7 +565,7 @@ public class UserController {
         }
         return JSONObject.toJSONString(resultMap);
     }
-    /*查询用户关注的所有人信息*/
+    /*查看个人信息*/
     @RequestMapping(value = "ownInformation")
     @ResponseBody
     public Object ownInformation(){

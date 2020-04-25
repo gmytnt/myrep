@@ -247,6 +247,12 @@ font-size: 18px;
     justify-content: space-between;
     align-items: center;
 }
+.info_item .column_title{
+    min-width: 80px;
+}
+.info_item img{
+    width: 240px;
+}
 .info_item input{
     padding: 6px;
 }
