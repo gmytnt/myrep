@@ -1,4 +1,5 @@
 package com.mytnt.service;
+
 import com.mytnt.dao.UserMapper;
 import com.mytnt.pojo.RegisterLog;
 import com.mytnt.pojo.User;
@@ -24,6 +25,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findtelePhone(String telephone) {
         return userMapper.findtelePhone(telephone);
+    }
+
+    @Override
+    public User findEmail(String email) {
+        return userMapper.findEmail(email);
+    }
+
+    @Override
+    public User findQQ(String qq) {
+        return userMapper.findQQ(qq);
     }
 
     @Override
@@ -147,4 +158,11 @@ public class UserServiceImpl implements UserService {
         Integer missNumber=userMapper.findtelePhone(telephone).getMissNumber();
         return userMapper.updateMissNumber(++missNumber,telephone);
     }
+
+    @Override
+    public int updateUsernaeOrEmailOrQQ(String username, String email, String qq,String file,Integer userId) {
+        return userMapper.updateUsernaeOrEmailOrQQ(username, email, qq,file,userId);
+    }
+
+
 }

@@ -4,7 +4,6 @@ import com.mytnt.pojo.RegisterLog;
 import com.mytnt.pojo.User;
 import com.mytnt.pojo.UserLog;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -16,6 +15,10 @@ public interface UserMapper {
     public User findUserName(@Param("username") String username);
     /*查询手机号是否注册*/
     public User findtelePhone(@Param("telephone") String telephone);
+    /*查询邮箱是否存在*/
+    public User findEmail(@Param("email") String email);
+    /*查询QQ是否存在*/
+    public User findQQ(@Param("qq") String qq);
     /*查用户信息*/
     public User findUserId(@Param("userId") Integer userId);
     /*t添加用户*/
@@ -61,4 +64,7 @@ public interface UserMapper {
     int addUserLog(UserLog userLog);
 
     int updateMissNumber(@Param("missNumber") Integer missNumber,@Param("telephone")String telephone);
+
+    int updateUsernaeOrEmailOrQQ(@Param("username")String username,@Param("email")String email,@Param("qq")String qq,
+                                 @Param("file")String file,@Param("userId")Integer userId);
 }

@@ -72,6 +72,16 @@
         SELECT u.*,r.* FROM t_user u LEFT OUTER JOIN t_user_roles ur ON u.`id`=ur.`user_id`
         LEFT OUTER JOIN	t_roles r ON ur.`role_id`=r.`roles_id` WHERE telephone=#{telephone}
     </select>
+    <!--查询邮箱是否存在-->
+    <select id="findEmail"
+            resultType="user">
+        SELECT * FROM t_user  WHERE email=#{email}
+    </select>
+    <!--查询QQ是否存在-->
+    <select id="findQQ"
+            resultType="user">
+        SELECT * FROM t_user  WHERE qq=#{qq}
+    </select>
     <!--查询用户是否存在-->
     <select id="findUserId"
             resultType="User">
@@ -169,6 +179,27 @@
     <update id="updateMissNumber">
         UPDATE t_user set miss_number=#{missNumber},miss_time=now() WHERE telephone=#{telephone}
     </update>
+    <!--修改用户名，email或者qq-->
+    <update id="updateUsernaeOrEmailOrQQ">
+        UPDATE t_user
+        <set>
+            <if test="username!= null and username != '' ">
+                username = #{username},
+            </if>
+            <if test="email!= null and email!= '' ">
+                email = #{email},
+            </if>
+            <if test="qq!= null and qq!= '' ">
+                qq = #{qq},
+            </if>
+            <if test="file!= null and file!= '' ">
+                avatar = #{file},
+            </if>
+        </set>
+        WHERE id=#{userId}
+    </update>
+
+
 </mapper>
 
 

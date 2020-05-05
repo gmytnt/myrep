@@ -94,11 +94,12 @@
 <script src="/static/js/header.js"></script>
 <script>
     //一般直接写在一个js文件中
-    layui.use(['layer', 'form','jquery','carousel','laypage'], function(){
+    layui.use(['layer', 'form','jquery','carousel','laypage','upload'], function(){
         var layer = layui.layer
             ,form = layui.form
             ,$=layui.jquery
             ,laypage = layui.laypage
+            ,upload=layui.upload
             ,carousel=layui.carousel;
 //            $(".header").load("/header");
 
@@ -191,18 +192,138 @@
             let ul=$('.bbs_post_list');
             ul.empty();
             let lis='<li class="info_item"><div class="column_title">头像：</div><img src="'+data.user.avatar+'"/><button class="layui-btn layui-btn-normal" id="modify_avatar">更换头像</button></li>' +
-                '<li class="info_item"><div class="column_title">用户名：</div><input value="'+data.user.username+'"/><button class="layui-btn layui-btn-normal" >修改</button></li>' +
-                '<li class="info_item"><div class="column_title">Email：</div><input value="'+(data.user.email==null?'':data.user.email)+'"/><button class="layui-btn layui-btn-normal" >修改</button></li>' +
-                '<li class="info_item"><div class="column_title">QQ：</div><input value="'+(data.user.qq==null?'':data.user.qq)+'"/><button class="layui-btn layui-btn-normal" >修改</button></li>' +
+                '<li class="info_item"><div class="column_title">用户名：</div><input value="'+data.user.username+'"/><button class="layui-btn layui-btn-normal" id="modify_username">修改</button></li>' +
+                '<li class="info_item"><div class="column_title">Email：</div><input value="'+(data.user.email==null?'':data.user.email)+'"/><button class="layui-btn layui-btn-normal" id="modify_email">修改</button></li>' +
+                '<li class="info_item"><div class="column_title">QQ：</div><input value="'+(data.user.qq==null?'':data.user.qq)+'"/><button class="layui-btn layui-btn-normal" id="modify_qq">修改</button></li>' +
                 '<li class="info_item"><div class="column_title">手机号：</div><div>'+data.user.telephone+'</div></li>'+
                 '<li class="info_item"><div class="column_title">注册时间：</div><div>'+dateFormat(new Date(data.user.createTime))+'</div></li>'+
                 '<li class="info_item"><div class="column_title">上次登录IP：</div><div>'+data.user.lastIp+'</div></li>'+
                 '<li class="info_item"><div class="column_title">上次登录时间：</div><div>'+dateFormat(new Date(data.user.lastTime))+'</div></li>'
             ul.append(lis);
+            uploadFiles();
         }
-        $(".bbs_post_list").on("click","#modify_avatar",function () {
-            console.log("确定修改吗");
+        function uploadFiles() {
+            upload.render({
+                elem: '#modify_avatar' //绑定元素
+                ,url: '/uploadFile' //上传接口
+                ,done: function(res){
+                    console.log(res);
+                    console.log(res.data[0]);
+                    var x=layer.open({
+                        type:0,
+                        title:"确定修改头像吗",  //标题
+                        content:'<img src="'+res.data[0]+'" width="80%"/>',//内容  type=0为内容
+                        skin :'layui-layer-molv',//皮肤
+                        area:['500px','300px'],//宽高
+                        offset: 'auto'	 //offset默认情况下不用设置。但如果你不想垂直水平居中
+                        , btn: ['确定', '取消']
+                        ,yes: function(index, layero){
+                            $.post('/updateUsernaeOrEmailOrQQ',{"file":res.data[0]},function (data) {
+                                if(data.code=="3"){
+                                    layer.msg(data.message,{icon:5});
+                                    setTimeout('window.location.href="/login"',500);
+                                }else if(data.code=="1"){
+                                    layer.msg(data.message,{icon:6});
+                                    setTimeout('window.location.reload()',500);
+                                }else {
+                                    layer.msg(data.message,{icon:5});
+                                }
+                            })
+                            layer.close(index);
+                        }
+                        ,btn2: function(index, layero){
+                            layer.close(index);
+                        }
+                        ,btnAlign :'c'  //按钮的对齐方式
+                        ,closeBtn : 1  //设置关闭按钮的样式  1  默认
+                        ,anim: 4 //设置动画
+                        ,maxmin :true //是否显示最大化和最小化的按钮 type=1 type=2有效
+                    })
+                }
+            });
+        }
+        //修改用户名
+        $(".bbs_post_list").on("click","#modify_username",function () {
+            let username=$(this).siblings("input").val().trim();
+            if(username==null||username==""){
+                layer.msg("用户不能为空", {icon: 2});
+                return
+            }
+            $.get('/findUserName', {"username": username}, function (data) {
+                if (data.code ==2) {
+                    layer.msg(data.message, {icon: 2});
+                }else {
+                    console.log("jjj");
+                    $.post('/updateUsernaeOrEmailOrQQ',{"username":username},function (data) {
+                        if(data.code=="3"){
+                            layer.msg(data.message,{icon:5});
+                            setTimeout('window.location.href="/login"',500);
+                        }else if(data.code=="1"){
+                            layer.msg(data.message,{icon:6});
+                            setTimeout('window.location.reload()',500);
+                        }else {
+                            layer.msg(data.message,{icon:5});
+                        }
+                    })
+                }
+            })
+
         });
+        //修改邮箱
+        $(".bbs_post_list").on("click","#modify_email",function () {
+            let email=$(this).siblings("input").val().trim();
+            if(email==null||!/^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/.test(email)){
+                layer.msg("邮箱不正确", {icon: 2});
+                return
+            }
+            $.get('/findEmail', {"email": email}, function (data) {
+                if (data.code ==2) {
+                    layer.msg(data.message, {icon: 2});
+                }else {
+                    console.log("jjj");
+                    $.post('/updateUsernaeOrEmailOrQQ',{"email":email},function (data) {
+                        if(data.code=="3"){
+                            layer.msg(data.message,{icon:5});
+                            setTimeout('window.location.href="/login"',500);
+                        }else if(data.code=="1"){
+                            layer.msg(data.message,{icon:6});
+                            setTimeout('window.location.reload()',500);
+                        }else {
+                            layer.msg(data.message,{icon:5});
+                        }
+                    })
+                }
+            })
+
+        });
+        //修改QQ
+        $(".bbs_post_list").on("click","#modify_qq",function () {
+            let qq=$(this).siblings("input").val().trim();
+            if(qq==null||!/^[1-9]\d{4,8}$/.test(qq)){
+                layer.msg("qq不正确", {icon: 2});
+                return
+            }
+            $.get('/findQQ', {"qq": qq}, function (data) {
+                if (data.code ==2) {
+                    layer.msg(data.message, {icon: 2});
+                }else {
+                    console.log("jjj");
+                    $.post('/updateUsernaeOrEmailOrQQ',{"qq":qq},function (data) {
+                        if(data.code=="3"){
+                            layer.msg(data.message,{icon:5});
+                            setTimeout('window.location.href="/login"',500);
+                        }else if(data.code=="1"){
+                            layer.msg(data.message,{icon:6});
+                            setTimeout('window.location.reload()',500);
+                        }else {
+                            layer.msg(data.message,{icon:5});
+                        }
+                    })
+                }
+            })
+
+        });
+        //左边个人信息
         function userInfo(data) {
             if(data.user!=null){
                 let  button='<button type="button" class="layui-btn" id="attention"><i class="fa fa-plus-square-o" aria-hidden="true"></i>&nbsp;<span>关注</span></button>';
@@ -221,6 +342,7 @@
                 $('.personal_information').empty().append(button+dom);
             }
         }
+        //所有文章
         function showArticle(data) {
             let ul=$('.bbs_post_list');
             ul.empty();
@@ -236,6 +358,7 @@
                 ul.append('<li><p>没有任何文章</p></li>');
             }
         }
+        //所有关注
         function showAttentionUserInfo(data) {
             let ul=$('.bbs_post_list');
             ul.empty();
@@ -341,7 +464,6 @@
             })
         });
     });
-    //        console.log(window.screen.width);
 </script>
 
 
